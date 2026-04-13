@@ -22,7 +22,8 @@ app.use("/api/health-info", healthRoutes);
 app.use("/api/reminders", reminderRoutes);
 app.use("/api/contacts", contactRoutes);
 app.use("/api/caregiver", caregiverRoutes);
-app.use("/api/appointments", appointmentRoutes);
+app.use("/api", appointmentRoutes);
+
 
 app.use(notFound);
 app.use(errorHandler);
