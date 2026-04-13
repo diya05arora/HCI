@@ -40,6 +40,17 @@ const dictionary = {
     callSuccess: "Call request sent successfully.",
     signIn: "Sign In",
     createAccount: "Create Account",
+    signInTitle: "Sign in to continue",
+    registerTitle: "Create your account",
+    signInSubtitle: "Access your care tools securely.",
+    registerSubtitle: "Set up your account to get started.",
+    passwordHint: "Use at least 6 characters.",
+    invalidEmail: "Please enter a valid email address.",
+    shortPassword: "Password must be at least 6 characters.",
+    confirmPassword: "Confirm Password",
+    passwordMismatch: "Passwords do not match.",
+    showPassword: "Show",
+    hidePassword: "Hide",
     fullName: "Full Name",
     email: "Email",
     password: "Password",
@@ -99,6 +110,17 @@ const dictionary = {
     callSuccess: "कॉल अनुरोध सफलतापूर्वक भेजा गया।",
     signIn: "साइन इन",
     createAccount: "खाता बनाएं",
+    signInTitle: "जारी रखने के लिए साइन इन करें",
+    registerTitle: "अपना खाता बनाएं",
+    signInSubtitle: "अपने देखभाल टूल्स तक सुरक्षित पहुंच पाएं।",
+    registerSubtitle: "शुरू करने के लिए अपना खाता सेट करें।",
+    passwordHint: "कम से कम 6 अक्षर इस्तेमाल करें।",
+    invalidEmail: "कृपया मान्य ईमेल पता दर्ज करें।",
+    shortPassword: "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।",
+    confirmPassword: "पासवर्ड की पुष्टि करें",
+    passwordMismatch: "पासवर्ड मेल नहीं खाते।",
+    showPassword: "दिखाएं",
+    hidePassword: "छुपाएं",
     fullName: "पूरा नाम",
     email: "ईमेल",
     password: "पासवर्ड",
@@ -566,7 +588,7 @@ function App() {
         </>
       )}
 
-      {statusMessage && <p className="panel notice">{statusMessage}</p>}
+      {token && statusMessage && <p className="panel notice">{statusMessage}</p>}
 
       <ConfirmDialog
         labels={labels}
