@@ -1,0 +1,436 @@
+/* Color Palette based on the UI */
+:root {
+  --primary-green: #3B5F4A;
+  --secondary-green: #4f785e;
+  --bg-color: #F9F7F2;
+  --text-dark: #2A3B32;
+  --text-light: #7A8B80;
+  --white: #FFFFFF;
+  --border-light: #EBE6DF;
+}
+
+.exercises-page-main {
+  font-family: 'Georgia', serif; /* Or any serif font similar to the image */
+  background-color: var(--bg-color);
+  color: var(--text-dark);
+}
+
+h1, h2, h3, h4 {
+  margin: 0;
+  font-weight: normal;
+}
+
+/* Hero Header */
+.hero-header {
+  background-color: var(--primary-green);
+  color: var(--white);
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.hero-content {
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.hero-content .badge {
+  font-size: 0.75rem;
+  letter-spacing: 2px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 6px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.hero-content h1 {
+  font-size: 3rem;
+  margin: 20px 0;
+}
+
+.hero-content p {
+  font-size: 1rem;
+  line-height: 1.6;
+  opacity: 0.9;
+  margin-bottom: 30px;
+}
+
+.hero-buttons {
+  display: flex;
+  gap: 15px;
+  justify-content: center;
+}
+
+.btn-primary, .btn-secondary, .btn-outline {
+  padding: 12px 24px;
+  border-radius: 30px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  border: none;
+  transition: all 0.2s ease;
+}
+
+.btn-primary {
+  background-color: var(--white);
+  color: var(--primary-green);
+  font-weight: bold;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Stats Bar */
+.stats-bar {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--white);
+  padding: 30px 20px;
+  text-align: center;
+  border-bottom: 1px solid var(--border-light);
+}
+
+.stat-item h2 {
+  font-size: 1.8rem;
+  color: var(--primary-green);
+}
+
+.stat-item p {
+  font-size: 0.75rem;
+  color: var(--text-light);
+  letter-spacing: 1px;
+  margin-top: 5px;
+}
+
+/* Main Container */
+.exercises-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 50px 20px;
+}
+
+/* Shared Section Styles */
+.section-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.section-header h2 {
+  font-size: 0.9rem;
+  letter-spacing: 2px;
+  color: var(--text-light);
+}
+
+.section-header hr {
+  flex-grow: 1;
+  border: none;
+  border-top: 1px solid var(--border-light);
+}
+
+.section-subtitle {
+  font-size: 1.1rem;
+  margin-bottom: 30px;
+  color: var(--text-dark);
+}
+
+/* Difficulty Filters */
+.difficulty-filters {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+.filter-btn {
+  padding: 8px 16px;
+  border: 1px solid var(--border-light);
+  background: transparent;
+  border-radius: 20px;
+  cursor: pointer;
+  color: var(--text-dark);
+}
+
+.filter-btn.active {
+  background: var(--primary-green);
+  color: var(--white);
+  border-color: var(--primary-green);
+}
+
+/* Exercise Grid */
+.exercises-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.exercise-card {
+  background: var(--white);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+}
+
+.card-top {
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-icon {
+  font-size: 3rem;
+}
+
+.card-body {
+  padding: 20px;
+  flex-grow: 1;
+}
+
+.duration-badge {
+  background: rgba(0,0,0,0.05);
+  font-size: 0.7rem;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: var(--text-light);
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.card-body h3 {
+  font-size: 1.2rem;
+  margin-bottom: 10px;
+}
+
+.card-body p {
+  font-size: 0.9rem;
+  color: var(--text-light);
+  line-height: 1.4;
+}
+
+.card-footer {
+  padding: 15px 20px;
+  border-top: 1px solid var(--border-light);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.difficulty-dots {
+  display: flex;
+  gap: 4px;
+}
+
+.difficulty-dots .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #E0DCD6;
+}
+
+.difficulty-dots .dot.filled {
+  background: var(--primary-green);
+}
+
+.action-text-btn {
+  background: none;
+  border: none;
+  color: var(--text-light);
+  cursor: pointer;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+}
+
+/* Stay Safe Section */
+.stay-safe-section {
+  margin-top: 60px;
+}
+
+.safety-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+.safety-card {
+  background: var(--white);
+  padding: 25px 20px;
+  border-radius: 12px;
+  text-align: left;
+}
+
+.safety-icon {
+  display: inline-block;
+  background: #F2F5F3;
+  padding: 12px;
+  border-radius: 50%;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.safety-card h4 {
+  font-size: 1.1rem;
+  margin-bottom: 10px;
+}
+
+.safety-card p {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  line-height: 1.5;
+}
+
+/* Weekly Plan Section */
+.weekly-plan-section {
+  margin-top: 60px;
+}
+
+.weekly-days {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.day-card {
+  flex: 1;
+  min-width: 100px;
+  background: var(--white);
+  padding: 20px 10px;
+  border-radius: 12px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid var(--border-light);
+}
+
+.day-card.active {
+  background: var(--primary-green);
+  color: var(--white);
+  border-color: var(--primary-green);
+}
+
+.day-card strong {
+  font-size: 0.8rem;
+  letter-spacing: 1px;
+}
+
+.day-card span {
+  font-size: 0.8rem;
+}
+
+/* Footer CTA */
+.cta-footer {
+  background-color: var(--primary-green);
+  color: var(--white);
+  text-align: center;
+  padding: 60px 20px;
+  margin-top: 60px;
+}
+
+.cta-footer h2 {
+  font-size: 2rem;
+  margin-bottom: 15px;
+}
+
+.cta-footer p {
+  opacity: 0.9;
+  max-width: 500px;
+  margin: 0 auto 30px;
+  line-height: 1.5;
+}
+
+.progress-container {
+  max-width: 400px;
+  margin: 0 auto 30px;
+}
+
+.progress-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  margin-bottom: 8px;
+  opacity: 0.8;
+}
+
+.progress-bar-bg {
+  height: 6px;
+  background: rgba(255,255,255,0.2);
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%;
+  background: #A3C9A8;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+.btn-outline {
+  background: transparent;
+  color: var(--white);
+  border: 1px solid rgba(255,255,255,0.5);
+  font-size: 0.9rem;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.guided-modal {
+  background: var(--white);
+  width: 90%;
+  max-width: 500px;
+  padding: 30px;
+  border-radius: 12px;
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: var(--text-light);
+}
+
+.modal-badge {
+  display: inline-block;
+  background: var(--primary-green);
+  color: var(--white);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  margin: 10px 0 20px;
+}
+
+.modal-content p {
+  margin-bottom: 15px;
+  line-height: 1.5;
+  color: var(--text-dark);
+}
+
+.modal-actions {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+}
+
+.modal-actions button {
+  flex: 1;
+}
