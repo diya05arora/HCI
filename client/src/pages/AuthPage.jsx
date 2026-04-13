@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PHONE_REGEX = /^[6-9]\d{9}$/;
 const COMMON_EMAIL_TYPOS = {
   "@gm.com": "gmail.com",
   "@gmil.com": "gmail.com",
@@ -18,10 +19,11 @@ function AuthPage({ labels, authMode, authForm, authSubmitting, onModeChange, on
   const [submittedInputVersion, setSubmittedInputVersion] = useState(-1);
 
   const nameInputRef = useRef(null);
-  const emailInputRef = useRef(null);
+  const identifierInputRef = useRef(null);
 
   const text = {
     invalidEmail: labels.invalidEmail || "Please enter a valid email address.",
+    invalidPhone: labels.invalidPhone || "Please enter a valid phone number.",
     shortPassword: labels.shortPassword || "Password must be at least 6 characters.",
     confirmPassword: labels.confirmPassword || "Confirm Password",
     passwordMismatch: labels.passwordMismatch || "Passwords do not match.",
@@ -31,7 +33,11 @@ function AuthPage({ labels, authMode, authForm, authSubmitting, onModeChange, on
     signInSubtitle: labels.signInSubtitle || "Access your care tools securely.",
     registerSubtitle: labels.registerSubtitle || "Set up your account to get started.",
     showPassword: labels.showPassword || "Show",
-    hidePassword: labels.hidePassword || "Hide"
+    hidePassword: labels.hidePassword || "Hide",
+    switchToPhone: labels.switchToPhone || "Use Phone",
+    switchToEmail: labels.switchToEmail || "Use Email",
+    phone: labels.phone || "Phone Number",
+    email: labels.email || "Email"
   };
 
   const renderToggleContent = (isVisible) => (
@@ -109,20 +115,26 @@ function AuthPage({ labels, authMode, authForm, authSubmitting, onModeChange, on
       return;
     }
 
-    emailInputRef.current?.focus();
+    identifierInputRef.current?.focus();
   }, [authMode]);
 
   const errors = useMemo(() => {
     const next = {};
+    const loginMethod = authForm.loginMethod || "email";
     const email = (authForm.email || "").trim();
+    const phone = (authForm.phone || "").trim().replace(/[\s-]/g, "");
     const password = authForm.password || "";
     const hasCommonTypoEmail = Object.keys(COMMON_EMAIL_TYPOS).some((suffix) => email.toLowerCase().endsWith(suffix));
 
-    if (!EMAIL_REGEX.test(email)) {
-      next.email = text.invalidEmail;
+    if (loginMethod === "phone") {
+      if (!PHONE_REGEX.test(phone)) {
+        next.identifier = text.invalidPhone;
+      }
+    } else if (!EMAIL_REGEX.test(email)) {
+      next.identifier = text.invalidEmail;
     }
 
-    if (hasCommonTypoEmail) {
+    if (loginMethod === "email" && hasCommonTypoEmail) {
       const matchedTypo = Object.entries(COMMON_EMAIL_TYPOS).find(([suffix]) => email.toLowerCase().endsWith(suffix));
       if (matchedTypo) {
         next.emailSuggestion = `Did you mean ${matchedTypo[1]}?`;
@@ -138,16 +150,29 @@ function AuthPage({ labels, authMode, authForm, authSubmitting, onModeChange, on
     }
 
     return next;
-  }, [authForm.email, authForm.password, confirmPassword, authMode, text.invalidEmail, text.passwordMismatch, text.shortPassword]);
+  }, [
+    authForm.email,
+    authForm.phone,
+    authForm.password,
+    authForm.loginMethod,
+    confirmPassword,
+    authMode,
+    text.invalidEmail,
+    text.invalidPhone,
+    text.passwordMismatch,
+    text.shortPassword
+  ]);
 
   const visibleErrors = submitAttempted
     ? {
-        email: errors.email,
+        identifier: errors.identifier,
         password: errors.password,
         confirmPassword: errors.confirmPassword
       }
     : {};
-  const hasInlineErrors = Boolean(visibleErrors.email || visibleErrors.password || visibleErrors.confirmPassword);
+  const hasInlineErrors = Boolean(
+    visibleErrors.identifier || visibleErrors.password || visibleErrors.confirmPassword
+  );
 
   const handleFieldChange = (field, value) => {
     setInputVersion((current) => current + 1);
@@ -163,12 +188,14 @@ function AuthPage({ labels, authMode, authForm, authSubmitting, onModeChange, on
     setSubmitAttempted(true);
     setSubmittedInputVersion(inputVersion);
 
+    const loginMethod = authForm.loginMethod || "email";
     const currentEmail = (authForm.email || "").trim().toLowerCase();
-    const emailOk = EMAIL_REGEX.test(currentEmail);
+    const currentPhone = (authForm.phone || "").trim().replace(/[\s-]/g, "");
+    const identifierOk = loginMethod === "phone" ? PHONE_REGEX.test(currentPhone) : EMAIL_REGEX.test(currentEmail);
     const passwordOk = (authForm.password || "").length >= 6;
     const confirmOk = authMode !== "register" || confirmPassword === (authForm.password || "");
 
-    if (!emailOk || !passwordOk || !confirmOk) {
+    if (!identifierOk || !passwordOk || !confirmOk) {
       event.preventDefault();
       return;
     }
@@ -275,30 +302,52 @@ function AuthPage({ labels, authMode, authForm, authSubmitting, onModeChange, on
           )}
 
           <div className="auth-form-group">
-            <label htmlFor="femail">{labels.email}</label>
-            <input
-              ref={authMode === "login" ? emailInputRef : null}
-              id="femail"
-              type="email"
-              value={authForm.email}
-              onChange={(e) => handleFieldChange("email", e.target.value)}
-              inputMode="email"
-              autoComplete="email"
-              aria-label={labels.email}
-              aria-invalid={Boolean(visibleErrors.email)}
-              aria-describedby={visibleErrors.email ? "email-error" : undefined}
-              className="auth-input-large"
-              style={inputStateStyle(visibleErrors.email, Boolean((authForm.email || "").trim()))}
-              required
-            />
-            {visibleErrors.email && (
+            <label htmlFor="fidentifier">{(authForm.loginMethod || "email") === "phone" ? text.phone : text.email}</label>
+            <div className="auth-password-row">
+              <input
+                ref={identifierInputRef}
+                id="fidentifier"
+                type={(authForm.loginMethod || "email") === "phone" ? "tel" : "email"}
+                value={(authForm.loginMethod || "email") === "phone" ? authForm.phone || "" : authForm.email || ""}
+                onChange={(e) => handleFieldChange((authForm.loginMethod || "email") === "phone" ? "phone" : "email", e.target.value)}
+                placeholder={(authForm.loginMethod || "email") === "phone" ? "Enter phone number" : "Enter email address"}
+                inputMode={(authForm.loginMethod || "email") === "phone" ? "tel" : "email"}
+                autoComplete={(authForm.loginMethod || "email") === "phone" ? "tel" : "email"}
+                aria-label={(authForm.loginMethod || "email") === "phone" ? text.phone : text.email}
+                aria-invalid={Boolean(visibleErrors.identifier)}
+                aria-describedby={visibleErrors.identifier ? "identifier-error" : undefined}
+                className="auth-input-large"
+                style={inputStateStyle(
+                  visibleErrors.identifier,
+                  Boolean(((authForm.loginMethod || "email") === "phone" ? authForm.phone || "" : authForm.email || "").trim())
+                )}
+                required
+              />
+              <button
+                type="button"
+                className="auth-mode-btn auth-toggle-btn"
+                onClick={() => {
+                  const newMethod = (authForm.loginMethod || "email") === "phone" ? "email" : "phone";
+                  handleFieldChange("loginMethod", newMethod);
+                  handleFieldChange(newMethod === "phone" ? "email" : "phone", "");
+                  setTimeout(() => identifierInputRef.current?.focus(), 0);
+                }}
+                aria-label={(authForm.loginMethod || "email") === "phone" ? text.switchToEmail : text.switchToPhone}
+                disabled={authSubmitting}
+              >
+                <span>
+                  {(authForm.loginMethod || "email") === "phone" ? text.switchToEmail : text.switchToPhone}
+                </span>
+              </button>
+            </div>
+            {visibleErrors.identifier && (
               <div style={helperSlotStyle}>
-                <p id="email-error" role="alert" aria-live="assertive" style={inlineErrorStyle}>
-                  {visibleErrors.email}
+                <p id="identifier-error" role="alert" aria-live="assertive" style={inlineErrorStyle}>
+                  {visibleErrors.identifier}
                 </p>
               </div>
             )}
-            {!visibleErrors.email && submitAttempted && errors.emailSuggestion && (
+            {!visibleErrors.identifier && submitAttempted && errors.emailSuggestion && (authForm.loginMethod || "email") === "email" && (
               <div style={helperSlotStyle}>
                 <p
                   role="status"
@@ -309,7 +358,9 @@ function AuthPage({ labels, authMode, authForm, authSubmitting, onModeChange, on
                 </p>
               </div>
             )}
-            {!visibleErrors.email && !(submitAttempted && errors.emailSuggestion) && <div style={helperSlotStyle} aria-hidden="true" />}
+            {!visibleErrors.identifier && !(submitAttempted && errors.emailSuggestion && (authForm.loginMethod || "email") === "email") && (
+              <div style={helperSlotStyle} aria-hidden="true" />
+            )}
           </div>
 
           <div className="auth-form-group">

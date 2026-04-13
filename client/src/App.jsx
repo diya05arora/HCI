@@ -46,6 +46,7 @@ const dictionary = {
     registerSubtitle: "Set up your account to get started.",
     passwordHint: "Use at least 6 characters.",
     invalidEmail: "Please enter a valid email address.",
+    invalidPhone: "Please enter a valid phone number.",
     shortPassword: "Password must be at least 6 characters.",
     confirmPassword: "Confirm Password",
     passwordMismatch: "Passwords do not match.",
@@ -53,6 +54,13 @@ const dictionary = {
     hidePassword: "Hide",
     fullName: "Full Name",
     email: "Email",
+    phone: "Phone Number",
+    switchToPhone: "Use Phone",
+    switchToEmail: "Use Email",
+    loginWith: "Login With",
+    emailOption: "Email",
+    phoneOption: "Phone Number",
+    optional: "Optional",
     password: "Password",
     accountType: "Account Type",
     elderlyUser: "Elderly User",
@@ -116,6 +124,7 @@ const dictionary = {
     registerSubtitle: "शुरू करने के लिए अपना खाता सेट करें।",
     passwordHint: "कम से कम 6 अक्षर इस्तेमाल करें।",
     invalidEmail: "कृपया मान्य ईमेल पता दर्ज करें।",
+    invalidPhone: "कृपया मान्य फोन नंबर दर्ज करें।",
     shortPassword: "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।",
     confirmPassword: "पासवर्ड की पुष्टि करें",
     passwordMismatch: "पासवर्ड मेल नहीं खाते।",
@@ -123,6 +132,13 @@ const dictionary = {
     hidePassword: "छुपाएं",
     fullName: "पूरा नाम",
     email: "ईमेल",
+    phone: "फोन नंबर",
+    switchToPhone: "फोन से करें",
+    switchToEmail: "ईमेल से करें",
+    loginWith: "लॉगिन विकल्प",
+    emailOption: "ईमेल",
+    phoneOption: "फोन नंबर",
+    optional: "वैकल्पिक",
     password: "पासवर्ड",
     accountType: "खाता प्रकार",
     elderlyUser: "वरिष्ठ उपयोगकर्ता",
@@ -166,7 +182,9 @@ function App() {
   const [authForm, setAuthForm] = useState({
     fullName: "",
     email: "",
+    phone: "",
     password: "",
+    loginMethod: "email",
     role: "elderly"
   });
   const [caregiverProfile, setCaregiverProfile] = useState({
@@ -288,10 +306,15 @@ function App() {
     const endpoint = authMode === "login" ? "login" : "register";
     const payload =
       authMode === "login"
-        ? { email: authForm.email, password: authForm.password }
+        ? {
+            email: authForm.loginMethod === "email" ? authForm.email : "",
+            phone: authForm.loginMethod === "phone" ? authForm.phone : "",
+            password: authForm.password
+          }
         : {
             fullName: authForm.fullName,
             email: authForm.email,
+            phone: authForm.phone,
             password: authForm.password,
             role: authForm.role
           };
@@ -309,7 +332,7 @@ function App() {
       }
 
       setSession(data.token, data.user);
-      setAuthForm({ fullName: "", email: "", password: "", role: "elderly" });
+      setAuthForm({ fullName: "", email: "", phone: "", password: "", loginMethod: "email", role: "elderly" });
       setStatusMessage(authMode === "login" ? labels.loginSuccess : labels.registerSuccess);
       navigate("/home", { replace: true });
     } catch (error) {
