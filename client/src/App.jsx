@@ -578,4 +578,26 @@ function App() {
   );
 }
 
+/*import LabTestsPage from "./pages/LabTestsPage";
+
+// Add state
+const [testBookings, setTestBookings] = useState([]);
+
+// Add handlers
+const handleBookingAdded = (booking) => setTestBookings(prev => [booking, ...prev]);
+const handleCancelBooking = async (id) => {
+  await fetch(`${API_URL}/test-bookings/${id}`, { method:"DELETE", headers: getAuthHeaders() });
+  setTestBookings(prev => prev.filter(b => b._id !== id));
+};
+
+// Add route
+<Route path="/tests" element={
+  <LabTestsPage
+    currentUser={currentUser}
+    bookings={testBookings}
+    onBookingAdded={handleBookingAdded}
+    onCancelBooking={handleCancelBooking}
+  />
+}/>*/
+
 export default App;
