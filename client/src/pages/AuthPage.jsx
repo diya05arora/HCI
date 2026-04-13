@@ -423,6 +423,7 @@ function AuthPage({ labels, authMode, authForm, authSubmitting, onModeChange, on
                     />
                   </path>
                 </svg>
+                
                 {labels.pleaseWait}
               </span>
             ) : authMode === "login" ? (
