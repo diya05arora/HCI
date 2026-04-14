@@ -27,6 +27,23 @@ const WEEKLY_PLAN_DATA = [
   { day: "SUN", exerciseName: "Rest day", isRest: true }
 ];
 
+const COMPLETED_EXERCISES_STORAGE_KEY = "completedExercisesPlan";
+
+function getWorkoutStreakFromStorage() {
+  try {
+    const raw = localStorage.getItem(COMPLETED_EXERCISES_STORAGE_KEY);
+    if (!raw) return 0;
+
+    const completedDays = JSON.parse(raw);
+    if (!Array.isArray(completedDays)) return 0;
+
+    const workoutDays = WEEKLY_PLAN_DATA.filter((item) => !item.isRest).map((item) => item.day);
+    return workoutDays.filter((day) => completedDays.includes(day)).length;
+  } catch {
+    return 0;
+  }
+}
+
 // ── helpers ──────────────────────────────────────────────────────────────────
 
 function DailyStatusStrip({ labels, reminders, appointments }) {
@@ -65,8 +82,20 @@ function DailyStatusStrip({ labels, reminders, appointments }) {
     }
   }
   
-  // Workout streak placeholder
-  const workoutStreak = 6; // This would come from exercise tracking data
+  const [workoutStreak, setWorkoutStreak] = useState(() => getWorkoutStreakFromStorage());
+
+  useEffect(() => {
+    const syncWorkoutStreak = () => setWorkoutStreak(getWorkoutStreakFromStorage());
+
+    syncWorkoutStreak();
+    window.addEventListener("storage", syncWorkoutStreak);
+    window.addEventListener("focus", syncWorkoutStreak);
+
+    return () => {
+      window.removeEventListener("storage", syncWorkoutStreak);
+      window.removeEventListener("focus", syncWorkoutStreak);
+    };
+  }, []);
 
   return (
     <section className="panel status-strip-panel" aria-label="Today at a glance">
