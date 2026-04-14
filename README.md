@@ -9,8 +9,7 @@ Accessibility-first website for elderly users and people with low digital litera
 - Medicine reminder cards with large checkboxes and clear `Taken` / `Not Taken` states
 - Emergency contacts with one-tap red call buttons and confirmation popup
 - Accessibility controls for text size, contrast mode, and language
-- Secure authentication (register/login) for elderly users and caregivers
-- Caregiver profile section to capture relationship, elder details, and care notes
+- Secure authentication (register/login) for elderly users
 - Separate auth page for Sign In / Create Account
 - Separate medicines page with large filter menu (Not Taken, Taken, All Medicines)
 - Mobile-friendly large-button navigation menu (no hamburger)
@@ -78,8 +77,6 @@ npm run dev
 - `PATCH /api/reminders/:id`
 - `GET /api/contacts`
 - `POST /api/contacts/call`
-- `GET /api/caregiver/profile`
-- `PUT /api/caregiver/profile`
 
 ## Notes
 
