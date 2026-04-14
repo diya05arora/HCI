@@ -1,0 +1,884 @@
+/* ── Welcome section ──────────────────────────────────────── */
+
+.home-page-main {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+
+.home-greeting {
+  margin: 0;
+  font-size: 1em;
+  color: rgba(255, 255, 255, 0.8);
+  font-weight: 400;
+}
+
+.home-user-name {
+  margin: 0.15rem 0 0.4rem;
+  font-family: "Lexend", sans-serif;
+  font-size: clamp(1.6rem, 5vw, 2.2rem);
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.01em;
+}
+
+.home-date {
+  margin: 0;
+  font-size: 0.9em;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+
+/* ── Section label (used across all new panels) ───────────── */
+
+.panel-section-label {
+  margin: 0 0 0.9rem 0;
+  font-size: 0.8em;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+
+/* ── Daily status strip ───────────────────────────────────── */
+
+.status-strip-panel {
+  padding: 1.25rem 1.75rem;
+}
+
+.status-strip {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.status-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 0.9rem;
+  padding: 1rem 0.5rem;
+  cursor: default;
+  transition: box-shadow 200ms ease;
+}
+
+.status-card:hover {
+  box-shadow: var(--shadow);
+}
+
+.status-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.status-value {
+  font-family: "Lexend", sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1;
+}
+
+.status-value--alert {
+  color: var(--danger);
+}
+
+.status-label {
+  font-size: 0.72em;
+  font-weight: 600;
+  color: var(--text-muted);
+  text-align: center;
+  line-height: 1.3;
+}
+
+.status-card-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+
+.status-subtitle {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  text-align: center;
+  line-height: 1.3;
+}
+
+
+/* ── Quick access grid ────────────────────────────────────── */
+
+.quick-access-panel {
+  padding: 1.25rem 1.75rem;
+}
+
+.quick-access-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.quick-access-btn {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  text-decoration: none;
+  padding: 1.1rem 1rem;
+  border-radius: 1rem;
+  border: 2px solid var(--border);
+  background: var(--surface);
+  transition: all 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: var(--shadow-sm);
+}
+
+.quick-access-btn:hover,
+.quick-access-btn:focus-visible {
+  border-color: var(--primary);
+  box-shadow: var(--shadow);
+  transform: translateY(-2px);
+}
+
+/* Color tints per button */
+.quick-access-btn:nth-child(1) { border-color: #a7e9c8; background: #f0fdf8; }
+.quick-access-btn:nth-child(2) { border-color: #b3d4f5; background: #eff6ff; }
+.quick-access-btn:nth-child(3) { border-color: #fcd8a1; background: #fffbf0; }
+.quick-access-btn:nth-child(4) { border-color: #d6bbf5; background: #f8f4ff; }
+
+.quick-access-btn:nth-child(1):hover { border-color: var(--accent); }
+.quick-access-btn:nth-child(2):hover { border-color: var(--focus); }
+.quick-access-btn:nth-child(3):hover { border-color: var(--secondary); }
+.quick-access-btn:nth-child(4):hover { border-color: #8b5cf6; }
+
+.qa-icon {
+  font-size: 1.7rem;
+  line-height: 1;
+}
+
+.qa-title {
+  font-size: 1em;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1.2;
+}
+
+.qa-sub {
+  font-size: 0.78em;
+  color: var(--text-secondary);
+  line-height: 1.3;
+}
+
+
+/* ── Medicines & Appointments row ─────────────────────────── */
+
+.medicines-appointments-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.75rem;
+}
+
+.medicines-appointments-panel {
+  background: var(--surface);
+  border: 2px solid var(--border);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.medicines-list,
+.appointments-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* ── Medicine Item ── */
+.medicine-item {
+  display: flex;
+  gap: 0.9rem;
+  align-items: center;
+  padding: 0.9rem;
+  background: var(--surface-secondary);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-light);
+}
+
+.medicine-status-icon {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.status-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85em;
+}
+
+.status-circle.status-pending {
+  background: #dbeafe;
+  color: #1e40af;
+  border: 2px solid #0ea5e9;
+}
+
+.status-circle.status-due-soon {
+  background: #fef3c7;
+  color: #92400e;
+  border: 2px solid #f59e0b;
+}
+
+.status-circle.status-taken {
+  background: #dcfce7;
+  color: #166534;
+  border: 2px solid #16a34a;
+}
+
+.medicine-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.medicine-name {
+  margin: 0;
+  font-size: 0.95em;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.medicine-details {
+  margin: 0.2rem 0 0;
+  font-size: 0.8em;
+  color: var(--text-secondary);
+}
+
+.medicine-btn {
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 0.8em;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.medicine-btn.btn-pending {
+  background: #dbeafe;
+  color: #0ea5e9;
+}
+
+.medicine-btn.btn-pending:hover {
+  background: #bfdbfe;
+  color: #0284c7;
+}
+
+.medicine-btn.btn-taken {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.medicine-btn.btn-taken:hover {
+  background: #bbf7d0;
+  color: #15803d;
+}
+
+/* ── Appointment Item ── */
+.appointment-item {
+  padding: 1rem;
+  background: var(--surface-secondary);
+  border-radius: 0.75rem;
+  border: 1px solid var(--border-light);
+}
+
+.appointment-item.empty {
+  text-align: center;
+  color: var(--text-secondary);
+}
+
+.appointment-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.doctor-name {
+  margin: 0;
+  font-size: 0.95em;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.appointment-type {
+  padding: 0.3rem 0.7rem;
+  background: #dbeafe;
+  color: #0ea5e9;
+  border-radius: 0.4rem;
+  font-size: 0.7em;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.appointment-details {
+  margin: 0;
+  font-size: 0.8em;
+  color: var(--text-secondary);
+}
+
+.add-appointment-btn {
+  width: 100%;
+  padding: 0.8rem;
+  margin-top: 0.5rem;
+  border: 2px solid var(--border);
+  background: transparent;
+  border-radius: 0.75rem;
+  font-size: 0.95em;
+  font-weight: 600;
+  color: var(--text-main);
+  cursor: pointer;
+  transition: all 200ms ease;
+}
+
+.add-appointment-btn:hover,
+.add-appointment-btn:focus-visible {
+  border-color: var(--primary);
+  background: #f0f9ff;
+  color: var(--primary);
+}
+
+
+/* ── Workout & Health Tips ────────────────────────────────── */
+
+.workout-tips-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.3rem;
+  margin-bottom: 1.75rem;
+}
+
+.wellness-panel {
+  background: linear-gradient(165deg, #f9fbff 0%, #f1f6fd 100%);
+  border: 1px solid #d5e3f3;
+  border-radius: 1rem;
+  padding: 1.3rem 1.25rem;
+  box-shadow: var(--shadow-sm);
+}
+
+.wellness-title {
+  margin: 0 0 1rem 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.workout-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.72rem;
+}
+
+.workout-item {
+  display: flex;
+  align-items: center;
+  gap: 0.72rem;
+}
+
+.workout-check-btn {
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+}
+
+.workout-check {
+  width: 24px;
+  height: 24px;
+  border-radius: 0.48rem;
+  border: 1.8px solid #b9c6d3;
+  background: #f4f7fb;
+  color: #0f6ea9;
+  font-size: 0.9rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 180ms ease;
+}
+
+.workout-check-btn.is-complete .workout-check {
+  background: #d9eaf8;
+  border-color: #a7caea;
+  color: #0a5f96;
+}
+
+.workout-text-btn {
+  border: none;
+  background: transparent;
+  margin: 0;
+  padding: 0;
+  text-align: left;
+  font-size: 0.96rem;
+  font-weight: 600;
+  color: var(--text-main);
+  line-height: 1.35;
+  cursor: pointer;
+}
+
+.workout-text-btn.is-complete {
+  text-decoration: line-through;
+  color: var(--text-secondary);
+}
+
+.tips-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.tip-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.72rem;
+}
+
+.tip-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  background: #d8e8f7;
+  color: #2f5474;
+  font-size: 0.95rem;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tip-text {
+  margin: 0;
+  font-size: 0.93rem;
+  color: var(--text-secondary);
+  line-height: 1.45;
+}
+
+
+/* ── Medicine summary ─────────────────────────────────────── */
+
+.medicine-summary-panel {
+  padding: 1.25rem 1.75rem;
+}
+
+.med-summary-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.med-summary-item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1rem;
+  background: var(--surface-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: 0.85rem;
+  transition: box-shadow 200ms ease;
+}
+
+.med-summary-item:hover {
+  box-shadow: var(--shadow-sm);
+}
+
+.med-status-dot {
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.med-status-dot--taken   { background: var(--accent); }
+.med-status-dot--pending { background: var(--danger); }
+
+.med-summary-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.med-summary-name {
+  font-size: 0.95em;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.med-summary-time {
+  font-size: 0.78em;
+  color: var(--text-muted);
+}
+
+.med-summary-badge {
+  border: none;
+  border-radius: 2rem;
+  padding: 0.35rem 0.85rem;
+  font-size: 0.78em;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 180ms ease;
+  white-space: nowrap;
+  min-height: 36px;
+}
+
+.med-badge--taken {
+  background: var(--taken);
+  color: #065f46;
+}
+
+.med-badge--taken:hover {
+  background: #a7f3d0;
+}
+
+.med-badge--pending {
+  background: var(--not-taken);
+  color: #92400e;
+}
+
+.med-badge--pending:hover {
+  background: #fde68a;
+}
+
+
+/* ── Daily health tip ─────────────────────────────────────── */
+
+.daily-tip-panel {
+  padding: 1.25rem 1.75rem;
+}
+
+.daily-tip-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1.1rem 1.25rem;
+  background: linear-gradient(135deg, #f0fdf8 0%, var(--surface) 100%);
+  border: 1px solid #a7e9c8;
+  border-radius: 1rem;
+}
+
+.tip-icon {
+  font-size: 1.7rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.tip-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.tip-title {
+  font-size: 1em;
+  font-weight: 700;
+  color: var(--text-main);
+}
+
+.tip-summary {
+  margin: 0;
+  font-size: 0.9em;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.tip-listen-btn {
+  align-self: flex-start;
+  margin-top: 0.3rem;
+  padding: 0.45rem 1rem;
+  font-size: 0.82em;
+  background: var(--accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 2rem;
+  cursor: pointer;
+  font-weight: 700;
+  transition: all 180ms ease;
+  min-height: 36px;
+}
+
+.tip-listen-btn:hover,
+.tip-listen-btn:focus-visible {
+  background: #059669;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+  transform: translateY(-1px);
+}
+
+
+/* ── Weather card ─────────────────────────────────────────── */
+
+.weather-panel {
+  padding: 1.25rem 1.75rem;
+}
+
+.weather-card {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  background: linear-gradient(135deg, #eff6ff 0%, var(--surface) 100%);
+  border: 1px solid #b3d4f5;
+  border-radius: 1rem;
+}
+
+.weather-icon {
+  font-size: 2.4rem;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.weather-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.weather-temp {
+  font-family: "Lexend", sans-serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-main);
+  line-height: 1;
+}
+
+.weather-desc {
+  font-size: 0.85em;
+  color: var(--text-secondary);
+}
+
+.weather-note {
+  font-size: 0.8em;
+  color: var(--text-secondary);
+  max-width: 160px;
+  line-height: 1.4;
+  text-align: right;
+}
+
+
+/* ── Mood check-in ────────────────────────────────────────── */
+
+.mood-panel {
+  padding: 1.25rem 1.75rem;
+}
+
+.mood-options {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.4rem;
+}
+
+.mood-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.35rem;
+  flex: 1;
+  padding: 0.75rem 0.3rem;
+  background: var(--surface-secondary);
+  border: 2px solid var(--border-light);
+  border-radius: 0.9rem;
+  cursor: pointer;
+  transition: all 200ms ease;
+  min-height: 72px;
+}
+
+.mood-btn:hover,
+.mood-btn:focus-visible {
+  border-color: var(--primary);
+  background: var(--primary-light);
+  transform: translateY(-3px);
+  box-shadow: var(--shadow);
+}
+
+.mood-btn:active {
+  transform: translateY(-1px);
+}
+
+.mood-emoji {
+  font-size: 1.5rem;
+  line-height: 1;
+}
+
+.mood-label {
+  font-size: 0.7em;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+
+/* ── Home section wrapper (existing sections on home page) ── */
+
+.home-section {
+  margin-bottom: 0;
+}
+
+#emergency-contacts {
+  scroll-margin-top: 1.5rem;
+}
+
+.home-section h3 {
+  margin: 0 0 1rem 0;
+  font-size: clamp(1.1rem, 3vw, 1.4rem);
+  font-weight: 700;
+  color: var(--primary);
+}
+
+
+/* ── Responsive ───────────────────────────────────────────── */
+
+@media (max-width: 640px) {
+
+  .home-user-name {
+    font-size: 1.6rem;
+  }
+
+  .status-strip {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+  }
+
+  .status-card {
+    padding: 0.85rem 0.35rem;
+  }
+
+  .status-value {
+    font-size: 1.2rem;
+  }
+
+  .status-label {
+    font-size: 0.65em;
+  }
+
+  .quick-access-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.6rem;
+  }
+
+  .quick-access-btn {
+    padding: 0.9rem 0.75rem;
+    border-radius: 0.85rem;
+  }
+
+  .qa-icon {
+    font-size: 1.4rem;
+  }
+
+  .qa-title {
+    font-size: 0.9em;
+  }
+
+  .qa-sub {
+    font-size: 0.72em;
+  }
+
+  .mood-options {
+    gap: 0.3rem;
+  }
+
+  .mood-btn {
+    min-height: 64px;
+    padding: 0.6rem 0.2rem;
+  }
+
+  .mood-emoji {
+    font-size: 1.3rem;
+  }
+
+  .mood-label {
+    font-size: 0.65em;
+  }
+
+  .weather-note {
+    display: none;
+  }
+
+  .daily-tip-card {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
+
+  .med-summary-item {
+    padding: 0.75rem 0.85rem;
+  }
+
+  .medicines-appointments-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .workout-tips-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .medicines-appointments-panel {
+    padding: 1.2rem;
+  }
+
+  .wellness-panel {
+    padding: 1.1rem;
+  }
+
+  .medicine-item,
+  .appointment-item {
+    padding: 0.8rem;
+  }
+
+  .medicine-name,
+  .doctor-name {
+    font-size: 0.9em;
+  }
+
+  .medicine-details,
+  .appointment-details {
+    font-size: 0.75em;
+  }
+
+  .medicine-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: 0.75em;
+  }
+}
+
+@media (max-width: 400px) {
+  .quick-access-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .status-strip {
+    gap: 0.4rem;
+  }
+}

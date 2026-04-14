@@ -21,11 +21,19 @@ const dictionary = {
     healthInfo: "Health Information",
     medicineReminders: "Medicine Reminders",
     emergencyContacts: "Emergency Contacts",
+    addEmergencyContact: "Add Emergency Contact",
+    contactName: "Name",
+    contactRelation: "Relation",
+    contactPhone: "Phone",
+    contactPriority: "Priority",
+    saveContact: "Save Contact",
+    contactAdded: "Emergency contact added successfully.",
     listen: "Listen",
     listenToCard: "Listen to health tip",
     taken: "Taken",
     notTaken: "Not Taken",
     callNow: "Call Now",
+    emergencyShortcut: "Emergency Call",
     accessibilityControls: "Accessibility Controls",
     textSize: "Text Size",
     contrastMode: "Contrast Mode",
@@ -40,8 +48,27 @@ const dictionary = {
     callSuccess: "Call request sent successfully.",
     signIn: "Sign In",
     createAccount: "Create Account",
+    signInTitle: "Sign in to continue",
+    registerTitle: "Create your account",
+    signInSubtitle: "Access your care tools securely.",
+    registerSubtitle: "Set up your account to get started.",
+    passwordHint: "Use at least 6 characters.",
+    invalidEmail: "Please enter a valid email address.",
+    invalidPhone: "Please enter a valid phone number.",
+    shortPassword: "Password must be at least 6 characters.",
+    confirmPassword: "Confirm Password",
+    passwordMismatch: "Passwords do not match.",
+    showPassword: "Show",
+    hidePassword: "Hide",
     fullName: "Full Name",
     email: "Email",
+    phone: "Phone Number",
+    switchToPhone: "Use Phone",
+    switchToEmail: "Use Email",
+    loginWith: "Login With",
+    emailOption: "Email",
+    phoneOption: "Phone Number",
+    optional: "Optional",
     password: "Password",
     accountType: "Account Type",
     elderlyUser: "Elderly User",
@@ -71,7 +98,16 @@ const dictionary = {
     appointmentsPageTitle: "Doctor Appointments",
     addAppointment: "Add Appointment",
     exercises: "Workouts",
-    exercisesPageTitle: "Guided Workouts"
+    exercisesPageTitle: "Guided Workouts",
+    medicinesToday: "MEDICINES TODAY",
+    nextAppointment: "NEXT APPOINTMENT",
+    workoutStreak: "WORKOUT STREAK",
+    keepItUp: "Keep it up!",
+    noAppointments: "No appointments scheduled",
+    todayGlance: "Today at a Glance",
+    todaysMedicines: "Today's medicines",
+    upcomingAppointments: "Upcoming appointments",
+    noUpcomingAppointments: "No upcoming appointments"
   },
   hi: {
     appTitle: "सीनियर केयर साथी",
@@ -80,11 +116,19 @@ const dictionary = {
     healthInfo: "स्वास्थ्य जानकारी",
     medicineReminders: "दवा रिमाइंडर",
     emergencyContacts: "आपातकालीन संपर्क",
+    addEmergencyContact: "आपातकालीन संपर्क जोड़ें",
+    contactName: "नाम",
+    contactRelation: "संबंध",
+    contactPhone: "फ़ोन",
+    contactPriority: "प्राथमिकता",
+    saveContact: "संपर्क सहेजें",
+    contactAdded: "आपातकालीन संपर्क सफलतापूर्वक जोड़ा गया।",
     listen: "सुनें",
     listenToCard: "स्वास्थ्य जानकारी सुनें",
     taken: "ले ली",
     notTaken: "नहीं ली",
     callNow: "अभी कॉल करें",
+    emergencyShortcut: "आपातकालीन कॉल",
     accessibilityControls: "सुगम्यता नियंत्रण",
     textSize: "अक्षर आकार",
     contrastMode: "कॉन्ट्रास्ट मोड",
@@ -99,8 +143,27 @@ const dictionary = {
     callSuccess: "कॉल अनुरोध सफलतापूर्वक भेजा गया।",
     signIn: "साइन इन",
     createAccount: "खाता बनाएं",
+    signInTitle: "जारी रखने के लिए साइन इन करें",
+    registerTitle: "अपना खाता बनाएं",
+    signInSubtitle: "अपने देखभाल टूल्स तक सुरक्षित पहुंच पाएं।",
+    registerSubtitle: "शुरू करने के लिए अपना खाता सेट करें।",
+    passwordHint: "कम से कम 6 अक्षर इस्तेमाल करें।",
+    invalidEmail: "कृपया मान्य ईमेल पता दर्ज करें।",
+    invalidPhone: "कृपया मान्य फोन नंबर दर्ज करें।",
+    shortPassword: "पासवर्ड कम से कम 6 अक्षरों का होना चाहिए।",
+    confirmPassword: "पासवर्ड की पुष्टि करें",
+    passwordMismatch: "पासवर्ड मेल नहीं खाते।",
+    showPassword: "दिखाएं",
+    hidePassword: "छुपाएं",
     fullName: "पूरा नाम",
     email: "ईमेल",
+    phone: "फोन नंबर",
+    switchToPhone: "फोन से करें",
+    switchToEmail: "ईमेल से करें",
+    loginWith: "लॉगिन विकल्प",
+    emailOption: "ईमेल",
+    phoneOption: "फोन नंबर",
+    optional: "वैकल्पिक",
     password: "पासवर्ड",
     accountType: "खाता प्रकार",
     elderlyUser: "वरिष्ठ उपयोगकर्ता",
@@ -130,7 +193,16 @@ const dictionary = {
     appointmentsPageTitle: "डॉक्टर की नियुक्तियां",
     addAppointment: "नियुक्ति जोड़ें",
     exercises: "व्यायाम",
-    exercisesPageTitle: "निर्देशित कसरत"
+    exercisesPageTitle: "निर्देशित कसरत",
+    medicinesToday: "आज की दवा",
+    nextAppointment: "अगली नियुक्ति",
+    workoutStreak: "व्यायाम स्ट्रीक",
+    keepItUp: "बढ़ते रहो!",
+    noAppointments: "कोई नियुक्ति निर्धारित नहीं है",
+    todayGlance: "आज एक नजर में",
+    todaysMedicines: "आज की दवाएं",
+    upcomingAppointments: "आने वाली नियुक्तियां",
+    noUpcomingAppointments: "कोई आने वाली नियुक्ति नहीं"
   }
 };
 
@@ -144,7 +216,9 @@ function App() {
   const [authForm, setAuthForm] = useState({
     fullName: "",
     email: "",
+    phone: "",
     password: "",
+    loginMethod: "email",
     role: "elderly"
   });
   const [caregiverProfile, setCaregiverProfile] = useState({
@@ -266,10 +340,15 @@ function App() {
     const endpoint = authMode === "login" ? "login" : "register";
     const payload =
       authMode === "login"
-        ? { email: authForm.email, password: authForm.password }
+        ? {
+            email: authForm.loginMethod === "email" ? authForm.email : "",
+            phone: authForm.loginMethod === "phone" ? authForm.phone : "",
+            password: authForm.password
+          }
         : {
             fullName: authForm.fullName,
             email: authForm.email,
+            phone: authForm.phone,
             password: authForm.password,
             role: authForm.role
           };
@@ -287,8 +366,7 @@ function App() {
       }
 
       setSession(data.token, data.user);
-      setAuthForm({ fullName: "", email: "", password: "", role: "elderly" });
-      setStatusMessage(authMode === "login" ? labels.loginSuccess : labels.registerSuccess);
+      setAuthForm({ fullName: "", email: "", phone: "", password: "", loginMethod: "email", role: "elderly" });
       navigate("/home", { replace: true });
     } catch (error) {
       setStatusMessage(error.message);
@@ -345,6 +423,30 @@ function App() {
       setSelectedContact(null);
     } catch (error) {
       setStatusMessage(error.message);
+    }
+  };
+
+  const handleAddEmergencyContact = async (contactData) => {
+    try {
+      const response = await fetch(`${API_URL}/contacts`, {
+        method: "POST",
+        headers: getAuthHeaders(),
+        body: JSON.stringify(contactData)
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || "Could not add emergency contact.");
+      }
+
+      setContacts((current) =>
+        [...current, data].sort((a, b) => (a.priority || 1) - (b.priority || 1))
+      );
+      setStatusMessage(labels.contactAdded || "Emergency contact added successfully.");
+      return true;
+    } catch (error) {
+      setStatusMessage(error.message);
+      return false;
     }
   };
 
@@ -437,6 +539,12 @@ function App() {
     }
   };
 
+  const handleEmergencyShortcut = () => {
+    navigate("/home", {
+      state: { scrollToEmergencyContacts: true }
+    });
+  };
+
   return (
     <div
       className={`app-shell ${settings.contrastMode === "high" ? "high-contrast" : ""}`}
@@ -469,6 +577,12 @@ function App() {
                 settings={settings}
                 onSettingsChange={setSettings}
               />
+              {currentUser && (
+                <button className="header-emergency-btn" onClick={handleEmergencyShortcut}>
+                  <span className="header-emergency-btn-icon" aria-hidden="true">☎</span>
+                  {labels.emergencyShortcut}
+                </button>
+              )}
               {currentUser && (
                 <button className="header-signout-btn" onClick={clearSession}>
                   {labels.signOut}
@@ -520,9 +634,13 @@ function App() {
                       labels={labels}
                       currentUser={currentUser}
                       healthCards={healthCards}
+                      reminders={reminders}
+                      appointments={appointments}
                       contacts={contacts}
                       onListen={handleListen}
                       onCall={setSelectedContact}
+                      onAddContact={handleAddEmergencyContact}
+                      onToggleReminder={handleReminderToggle}
                     />
                   }
                 />
@@ -566,7 +684,7 @@ function App() {
         </>
       )}
 
-      {statusMessage && <p className="panel notice">{statusMessage}</p>}
+      {token && statusMessage && <p className="panel notice">{statusMessage}</p>}
 
       <ConfirmDialog
         labels={labels}
