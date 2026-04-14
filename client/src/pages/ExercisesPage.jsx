@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from "react";
-// Assumed styles are in ExercisesPage.css
 import "./ExercisesPage.css";
 
 function ExercisesPage({ labels, currentUser, onListen }) {
@@ -8,8 +7,15 @@ function ExercisesPage({ labels, currentUser, onListen }) {
   const [exerciseProgress, setExerciseProgress] = useState({});
   const [isGuidedMode, setIsGuidedMode] = useState(false);
   
-  // State for weekly plan tracking
-  const [completedDays, setCompletedDays] = useState([]);
+  // Initialize completedDays from Local Storage
+  const [completedDays, setCompletedDays] = useState(() => {
+    const savedDays = localStorage.getItem("completedExercisesPlan");
+    if (savedDays) {
+      return JSON.parse(savedDays);
+    }
+    return [];
+  });
+
   const [currentDayStr, setCurrentDayStr] = useState("");
 
   // Determine current day on load
@@ -19,7 +25,11 @@ function ExercisesPage({ labels, currentUser, onListen }) {
     setCurrentDayStr(days[today]);
   }, []);
 
-  // Exactly 3 exercises per level (9 total)
+  // Save to Local Storage whenever completedDays changes
+  useEffect(() => {
+    localStorage.setItem("completedExercisesPlan", JSON.stringify(completedDays));
+  }, [completedDays]);
+
   const exercises = [
     // --- BEGINNER ---
     {
@@ -33,7 +43,7 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       reps: 1,
       safety: "Wear comfortable shoes, walk on a flat surface, stay hydrated.",
       icon: "🚶",
-      bgColor: "#f4ede8"
+      bgColor: "#bae6fd" /* Stronger sky blue */
     },
     {
       id: 2,
@@ -46,7 +56,7 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       reps: 10,
       safety: "Move slowly, don't bounce, stop if you feel pain.",
       icon: "🪑",
-      bgColor: "#fcf8f2"
+      bgColor: "#dbeafe" /* Soft blue */
     },
     {
       id: 3,
@@ -59,7 +69,7 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       reps: 15,
       safety: "Keep movements controlled and gentle, don't overextend.",
       icon: "🦋",
-      bgColor: "#f3eff6"
+      bgColor: "#e0f2fe" /* Light sky blue */
     },
     
     // --- INTERMEDIATE ---
@@ -74,7 +84,7 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       reps: 10,
       safety: "Always have support nearby, perform near a wall or chair.",
       icon: "🧘",
-      bgColor: "#fcf8f2"
+      bgColor: "#dbeafe"
     },
     {
       id: 5,
@@ -87,7 +97,7 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       reps: 10,
       safety: "Ensure wall is stable, move slowly and controlled.",
       icon: "💪",
-      bgColor: "#eef4f1"
+      bgColor: "#bae6fd"
     },
     {
       id: 6,
@@ -100,7 +110,7 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       reps: 10,
       safety: "Always hold a rail and look exactly where you step.",
       icon: "🪜",
-      bgColor: "#f4ede8"
+      bgColor: "#e0f2fe"
     },
 
     // --- ADVANCED ---
@@ -115,7 +125,7 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       reps: 10,
       safety: "Use a stable chair and keep movements slow and controlled.",
       icon: "🦵",
-      bgColor: "#f3eff6"
+      bgColor: "#e0f2fe"
     },
     {
       id: 8,
@@ -128,7 +138,7 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       reps: 12,
       safety: "Ensure the band is securely anchored around your feet before pulling.",
       icon: "🎗️",
-      bgColor: "#eef4f1"
+      bgColor: "#dbeafe"
     },
     {
       id: 9,
@@ -141,11 +151,10 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       reps: 8,
       safety: "Don't let your front knee go past your toes. Keep movements shallow if needed.",
       icon: "🧎",
-      bgColor: "#fcf8f2"
+      bgColor: "#bae6fd"
     }
   ];
 
-  // Dynamic Weekly Plan mapped to actual library exercises
   const weeklyPlanData = [
     { day: "MON", exerciseName: "Seated Stretches", isRest: false },
     { day: "TUE", exerciseName: "Wall Push-ups", isRest: false },
@@ -196,7 +205,6 @@ function ExercisesPage({ labels, currentUser, onListen }) {
 
   return (
     <div className="exercises-page-main">
-
       <main className="exercises-container">
         
         {/* Exercise Library Section */}
@@ -285,7 +293,7 @@ function ExercisesPage({ labels, currentUser, onListen }) {
                 <div 
                   key={plan.day} 
                   className={`day-card ${isToday ? 'active' : ''} ${isDone ? 'completed' : ''}`}
-                  style={isDone ? { opacity: 0.7, border: '2px solid #4a7c59' } : {}}
+                  style={isDone ? { backgroundColor: '#f0f8ff', border: '2px solid #006B9F' } : {}}
                 >
                   <strong>{plan.day} {isToday && "(Today)"}</strong>
                   
@@ -301,17 +309,19 @@ function ExercisesPage({ labels, currentUser, onListen }) {
                         onClick={() => toggleDayCompletion(plan.day)}
                         style={{
                           marginTop: 'auto',
-                          padding: '4px 8px',
-                          borderRadius: '4px',
+                          padding: '8px 10px',
+                          borderRadius: '6px',
                           border: 'none',
-                          backgroundColor: isDone ? '#eef4f1' : '#f0f0f0',
-                          color: isDone ? '#2c4c3b' : '#333',
+                          backgroundColor: isDone ? '#006B9F' : '#e0f2fe',
+                          color: isDone ? 'white' : '#006B9F',
                           cursor: 'pointer',
                           fontWeight: 'bold',
-                          fontSize: '0.85rem'
+                          fontSize: '0.85rem',
+                          width: '100%',
+                          transition: 'all 0.2s'
                         }}
                       >
-                        {isDone ? "✅ Done" : "Mark Done"}
+                        {isDone ? "✅ Completed" : "Mark Done"}
                       </button>
                     </>
                   )}
