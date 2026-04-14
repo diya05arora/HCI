@@ -18,7 +18,7 @@ const dictionary = {
     appSubtitle:
       "Simple, safe, and clear digital support for health, medicine, and emergency help.",
     mainActions: "Main Actions",
-    healthInfo: "Health Information",
+    healthInfo: "Appointments",
     medicineReminders: "Medicine Reminders",
     emergencyContacts: "Emergency Contacts",
     addEmergencyContact: "Add Emergency Contact",

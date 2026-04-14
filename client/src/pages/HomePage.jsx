@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import EmergencyContactsSection from "../components/EmergencyContactsSection";
 import HealthInfoSection from "../components/HealthInfoSection";
 import MedicineRemindersSection from "../components/MedicineRemindersSection";
@@ -100,11 +100,15 @@ function DailyStatusStrip({ labels, reminders, appointments }) {
 
 function QuickAccessGrid({ labels }) {
   const items = [
-    { href: "#health-info",         icon: "🫀", title: labels.healthInfo,        sub: labels.healthInfoSub    || "Tips & articles"     },
-    { href: "#medicine-reminders",  icon: "💊", title: labels.medicineReminders, sub: labels.medicineSub      || "Today's schedule"    },
-    { href: "#emergency-contacts",  icon: "📞", title: labels.emergencyContacts, sub: labels.emergencySub     || "One-tap call"        },
-    { href: "#mood-checkin",        icon: "😊", title: labels.moodCheckin        || "Mood Check",
-                                                sub: labels.moodCheckinSub      || "How are you today?" },
+    { to: "/medicines", icon: "💊", title: labels.medicineReminders },
+    { to: "/appointments", icon: "☎️", title: labels.healthInfo },
+    {
+      to: "/home",
+      state: { scrollToEmergencyContacts: true },
+      icon: "📞",
+      title: labels.emergencyContacts
+    },
+    { to: "/exercises", icon: "💪", title: labels.exercises || "Workouts" },
   ];
 
   return (
@@ -112,11 +116,17 @@ function QuickAccessGrid({ labels }) {
       <h3 className="panel-section-label">{labels.mainActions}</h3>
       <div className="quick-access-grid">
         {items.map((item) => (
-          <a key={item.href} href={item.href} className="quick-access-btn" aria-label={item.title}>
+          <Link
+            key={item.title}
+            to={item.to}
+            state={item.state}
+            className="quick-access-btn"
+            aria-label={item.title}
+          >
             <span className="qa-icon" aria-hidden="true">{item.icon}</span>
             <span className="qa-title">{item.title}</span>
             <span className="qa-sub">{item.sub}</span>
-          </a>
+          </Link>
         ))}
       </div>
     </section>
