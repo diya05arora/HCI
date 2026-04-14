@@ -1,34 +1,97 @@
+import { useEffect, useMemo, useState } from "react";
+import { useLocation } from "react-router-dom";
 import EmergencyContactsSection from "../components/EmergencyContactsSection";
 import HealthInfoSection from "../components/HealthInfoSection";
 import MedicineRemindersSection from "../components/MedicineRemindersSection";
 import "./HomePage.css";
 
+const WORKOUT_LIBRARY = [
+  { id: 1, name: "Gentle Walking", duration: 10 },
+  { id: 2, name: "Seated Stretches", duration: 8 },
+  { id: 3, name: "Arm Circles", duration: 5 },
+  { id: 4, name: "Standing Balance", duration: 10 },
+  { id: 5, name: "Wall Push-ups", duration: 8 },
+  { id: 6, name: "Gentle Step-Ups", duration: 10 },
+  { id: 7, name: "Advanced Chair Squats", duration: 12 },
+  { id: 8, name: "Resistance Band Rows", duration: 15 },
+  { id: 9, name: "Supported Lunges", duration: 10 }
+];
+
+const WEEKLY_PLAN_DATA = [
+  { day: "MON", exerciseName: "Seated Stretches", isRest: false },
+  { day: "TUE", exerciseName: "Wall Push-ups", isRest: false },
+  { day: "WED", exerciseName: "Rest day", isRest: true },
+  { day: "THU", exerciseName: "Gentle Walking", isRest: false },
+  { day: "FRI", exerciseName: "Standing Balance", isRest: false },
+  { day: "SAT", exerciseName: "Supported Lunges", isRest: false },
+  { day: "SUN", exerciseName: "Rest day", isRest: true }
+];
+
 // ── helpers ──────────────────────────────────────────────────────────────────
 
-function DailyStatusStrip({ labels, reminders, contacts }) {
+function DailyStatusStrip({ labels, reminders, appointments }) {
   const takenCount = reminders.filter((r) => r.taken).length;
-  const pendingMeds = reminders.filter((r) => !r.taken).length;
+  const pendingMeds = reminders.filter((r) => !r.taken);
+  const getReminderTime = (reminder) => reminder.scheduledTime || reminder.time || reminder.timeLabel || "";
+  
+  // Get next medicine to take
+  let nextMedicineTime = null;
+  if (pendingMeds.length > 0) {
+    const sorted = pendingMeds.sort((a, b) => {
+      const timeA = getReminderTime(a);
+      const timeB = getReminderTime(b);
+      return timeA.localeCompare(timeB);
+    });
+    nextMedicineTime = getReminderTime(sorted[0]);
+  }
+  
+  // Get next appointment
+  let nextAppointment = null;
+  let daysUntilAppointment = 0;
+  if (appointments && appointments.length > 0) {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const futureApts = appointments.filter(apt => !apt.completed);
+    
+    if (futureApts.length > 0) {
+      const sorted = futureApts.sort((a, b) => 
+        new Date(a.appointmentDate) - new Date(b.appointmentDate)
+      );
+      nextAppointment = sorted[0];
+      
+      const aptDate = new Date(nextAppointment.appointmentDate);
+      aptDate.setHours(0, 0, 0, 0);
+      daysUntilAppointment = Math.ceil((aptDate - today) / (1000 * 60 * 60 * 24));
+    }
+  }
+  
+  // Workout streak placeholder
+  const workoutStreak = 6; // This would come from exercise tracking data
 
   return (
     <section className="panel status-strip-panel" aria-label="Today at a glance">
       <h3 className="panel-section-label">{labels.todayGlance || "Today at a glance"}</h3>
       <div className="status-strip">
-        <div className="status-card" aria-label={`${takenCount} of ${reminders.length} medicines taken`}>
-          <span className="status-icon" aria-hidden="true">💊</span>
+        <div className="status-card">
+          <span className="status-card-title">{labels.medicinesToday || "MEDICINES TODAY"}</span>
           <span className="status-value">{takenCount}/{reminders.length}</span>
-          <span className="status-label">{labels.medicineReminders}</span>
+          {nextMedicineTime && <span className="status-subtitle">1 due at {nextMedicineTime}</span>}
         </div>
-        <div className="status-card" aria-label={`${pendingMeds} medicine${pendingMeds !== 1 ? "s" : ""} pending`}>
-          <span className="status-icon" aria-hidden="true">⏳</span>
-          <span className={`status-value ${pendingMeds > 0 ? "status-value--alert" : ""}`}>
-            {pendingMeds}
-          </span>
-          <span className="status-label">{labels.pending || "Pending"}</span>
+        <div className="status-card">
+          <span className="status-card-title">{labels.nextAppointment || "NEXT APPOINTMENT"}</span>
+          {nextAppointment ? (
+            <>
+              <span className="status-value">{daysUntilAppointment} {daysUntilAppointment === 1 ? "day" : "days"}</span>
+              <span className="status-subtitle">{nextAppointment.doctorName} – {nextAppointment.specialty}</span>
+            </>
+          ) : (
+            <span className="status-subtitle">{labels.noAppointments || "No appointments scheduled"}</span>
+          )}
         </div>
-        <div className="status-card" aria-label={`${contacts.length} emergency contacts saved`}>
-          <span className="status-icon" aria-hidden="true">📞</span>
-          <span className="status-value">{contacts.length}</span>
-          <span className="status-label">{labels.emergencyContacts}</span>
+        <div className="status-card">
+          <span className="status-card-title">{labels.workoutStreak || "WORKOUT STREAK"}</span>
+          <span className="status-value">{workoutStreak} days</span>
+          <span className="status-subtitle">{labels.keepItUp || "Keep it up!"}</span>
         </div>
       </div>
     </section>
@@ -77,13 +140,13 @@ function MedicineSummary({ labels, reminders, onToggle }) {
               aria-hidden="true"
             />
             <span className="med-summary-info">
-              <span className="med-summary-name">{med.name}</span>
-              <span className="med-summary-time">{med.scheduledTime || med.time}</span>
+              <span className="med-summary-name">{med.name || med.medicineName}</span>
+              <span className="med-summary-time">{med.scheduledTime || med.time || med.timeLabel}</span>
             </span>
             <button
               className={`med-summary-badge ${med.taken ? "med-badge--taken" : "med-badge--pending"}`}
               onClick={() => onToggle && onToggle(med)}
-              aria-label={`${med.name}: ${med.taken ? labels.taken : labels.notTaken}. Tap to change.`}
+              aria-label={`${med.name || med.medicineName}: ${med.taken ? labels.taken : labels.notTaken}. Tap to change.`}
             >
               {med.taken ? `${labels.taken} ✓` : labels.notTaken}
             </button>
@@ -94,32 +157,6 @@ function MedicineSummary({ labels, reminders, onToggle }) {
   );
 }
 
-function DailyHealthTip({ labels, healthCards, onListen }) {
-  if (!healthCards || healthCards.length === 0) return null;
-  const tip = healthCards[0];
-
-  return (
-    <section className="panel daily-tip-panel" aria-labelledby="daily-tip-title">
-      <h3 id="daily-tip-title" className="panel-section-label">
-        {labels.dailyTip || "Daily Health Tip"}
-      </h3>
-      <article className="daily-tip-card">
-        <span className="tip-icon" aria-hidden="true">💡</span>
-        <div className="tip-body">
-          <strong className="tip-title">{tip.title}</strong>
-          <p className="tip-summary">{tip.summary}</p>
-          <button
-            className="audio-btn tip-listen-btn"
-            onClick={() => onListen(tip.audioText || tip.summary)}
-            aria-label={`${labels.listen}: ${tip.title}`}
-          >
-            {labels.listen} 🔊
-          </button>
-        </div>
-      </article>
-    </section>
-  );
-}
 
 function WeatherCard({ labels }) {
   // Static placeholder — wire to a weather API or env variable as needed.
@@ -137,56 +174,205 @@ function WeatherCard({ labels }) {
   );
 }
 
-function MoodCheckin({ labels }) {
-  const moods = [
-    { emoji: "😄", key: "great",  label: labels.moodGreat  || "Great"  },
-    { emoji: "🙂", key: "good",   label: labels.moodGood   || "Good"   },
-    { emoji: "😐", key: "okay",   label: labels.moodOkay   || "Okay"   },
-    { emoji: "😔", key: "low",    label: labels.moodLow    || "Low"    },
-    { emoji: "😣", key: "unwell", label: labels.moodUnwell || "Unwell" },
-  ];
 
+// ── Main HomePage ─────────────────────────────────────────────────────────────
+
+function TodaysMedicinesPanel({ labels, reminders, onToggleReminder }) {
+  if (!reminders || reminders.length === 0) return null;
+  
   return (
-    <section
-      id="mood-checkin"
-      className="panel mood-panel"
-      aria-labelledby="mood-title"
-    >
-      <h3 id="mood-title" className="panel-section-label">
-        {labels.moodCheckin || "How are you feeling today?"}
-      </h3>
-      <div className="mood-options" role="group" aria-label="Select your mood">
-        {moods.map((m) => (
-          <button
-            key={m.key}
-            className="mood-btn"
-            aria-label={m.label}
-            onClick={() => {
-              // Persist mood to backend via existing API pattern if needed
-              console.log("Mood logged:", m.key);
-            }}
-          >
-            <span className="mood-emoji" aria-hidden="true">{m.emoji}</span>
-            <span className="mood-label">{m.label}</span>
-          </button>
-        ))}
+    <section className="medicines-appointments-panel">
+      <h3 className="panel-section-label">{labels.todaysMedicines || "Today's medicines"}</h3>
+      <div className="medicines-list">
+        {reminders.map((med) => {
+          const isTaken = med.taken;
+          const isPending = !isTaken;
+          const isDueSoon = !med.taken && isPending; // Could add logic for time-based urgency
+          const medicineDisplayName = med.name || med.medicineName || "Medicine";
+          
+          return (
+            <div key={med._id} className="medicine-item">
+              <div className="medicine-status-icon">
+                <span className={`status-circle ${isTaken ? "status-taken" : isDueSoon ? "status-due-soon" : "status-pending"}`}>
+                  {isTaken ? "✓" : "○"}
+                </span>
+              </div>
+              <div className="medicine-info">
+                <h4 className="medicine-name">{medicineDisplayName}</h4>
+              </div>
+              <button
+                className={`medicine-btn ${isTaken ? "btn-taken" : "btn-pending"}`}
+                onClick={() => onToggleReminder && onToggleReminder(med._id, !isTaken)}
+              >
+                {isTaken ? "Taken" : isDueSoon ? "Due soon" : "Take"}
+              </button>
+            </div>
+          );
+        })}
       </div>
     </section>
   );
 }
 
-// ── Main HomePage ─────────────────────────────────────────────────────────────
+function UpcomingAppointmentsPanel({ labels, appointments }) {
+  const futureAppointments = (appointments || [])
+    .filter(apt => !apt.completed)
+    .sort((a, b) => new Date(a.appointmentDate) - new Date(b.appointmentDate))
+    .slice(0, 3); // Show max 3 upcoming
+  
+  return (
+    <section className="medicines-appointments-panel">
+      <h3 className="panel-section-label">{labels.upcomingAppointments || "Upcoming appointments"}</h3>
+      <div className="appointments-list">
+        {futureAppointments.length > 0 ? (
+          futureAppointments.map((apt) => {
+            const aptDate = new Date(apt.appointmentDate);
+            const dateStr = aptDate.toLocaleDateString("en-IN", {
+              weekday: "short",
+              day: "numeric",
+              month: "short"
+            });
+            const timeStr = aptDate.toLocaleTimeString("en-IN", {
+              hour: "2-digit",
+              minute: "2-digit",
+              hour12: false
+            });
+            
+            return (
+              <div key={apt._id} className="appointment-item">
+                <div className="appointment-header">
+                  <h4 className="doctor-name">{apt.doctorName || apt.hospitalName}</h4>
+                  <span className="appointment-type">{apt.specialty}</span>
+                </div>
+                <p className="appointment-details">{dateStr} · {timeStr}</p>
+              </div>
+            );
+          })
+        ) : (
+          <div className="appointment-item empty">
+            <p className="appointment-details">{labels.noUpcomingAppointments || "No upcoming appointments"}</p>
+          </div>
+        )}
+      </div>
+    </section>
+  );
+}
+
+function WorkoutAndTipsPanel({ labels }) {
+  const dayKeys = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+  const todayKey = dayKeys[new Date().getDay()];
+  const dateKey = new Date().toISOString().slice(0, 10);
+
+  const workoutItems = useMemo(() => {
+    const todayPlan = WEEKLY_PLAN_DATA.find((entry) => entry.day === todayKey);
+    if (!todayPlan) return [];
+
+    if (todayPlan.isRest) {
+      return [
+        { id: "recovery-1", title: "Seated Stretches", duration: "8 min" },
+        { id: "recovery-2", title: "Arm Circles", duration: "5 min" }
+      ];
+    }
+
+    const planned = WORKOUT_LIBRARY.find((item) => item.name === todayPlan.exerciseName);
+    const support = WORKOUT_LIBRARY.filter(
+      (item) => item.name !== todayPlan.exerciseName
+    ).slice(0, 2);
+
+    return [
+      ...(planned ? [{ id: `main-${planned.id}`, title: planned.name, duration: `${planned.duration} min` }] : []),
+      ...support.map((item) => ({
+        id: `support-${item.id}`,
+        title: item.name,
+        duration: `${item.duration} min`
+      }))
+    ];
+  }, [todayKey]);
+
+  const completionStorageKey = `home-workout-completed-${dateKey}`;
+  const [completedItems, setCompletedItems] = useState(() => {
+    try {
+      const raw = localStorage.getItem(completionStorageKey);
+      return raw ? JSON.parse(raw) : [];
+    } catch {
+      return [];
+    }
+  });
+
+  const toggleWorkoutItem = (itemId) => {
+    setCompletedItems((prev) => {
+      const next = prev.includes(itemId)
+        ? prev.filter((id) => id !== itemId)
+        : [...prev, itemId];
+      localStorage.setItem(completionStorageKey, JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const tips = [
+    "Stay hydrated - aim for 6-8 glasses of water before 6 PM.",
+    "Your Vitamin D dose tonight is best taken with a small meal.",
+    "Blood test in 11 days - avoid heavy meals the night before."
+  ];
+
+  return (
+    <section className="workout-tips-row" aria-label={labels.exercisesPageTitle || "Daily wellness plan"}>
+      <article className="wellness-panel">
+        <h3 className="wellness-title">Today's workout</h3>
+        <ul className="workout-list" role="list">
+          {workoutItems.map((item) => (
+            <li key={item.id} className="workout-item">
+              <button
+                type="button"
+                className={`workout-check-btn ${completedItems.includes(item.id) ? "is-complete" : ""}`}
+                onClick={() => toggleWorkoutItem(item.id)}
+                aria-label={`Mark ${item.title} as completed`}
+                aria-pressed={completedItems.includes(item.id)}
+              >
+                <span className="workout-check" aria-hidden="true">
+                  {completedItems.includes(item.id) ? "✓" : ""}
+                </span>
+              </button>
+              <button
+                type="button"
+                className={`workout-text-btn ${completedItems.includes(item.id) ? "is-complete" : ""}`}
+                onClick={() => toggleWorkoutItem(item.id)}
+              >
+                {item.title} - {item.duration}
+              </button>
+            </li>
+          ))}
+        </ul>
+      </article>
+
+      <article className="wellness-panel">
+        <h3 className="wellness-title">Health tips</h3>
+        <ol className="tips-list">
+          {tips.map((tip, index) => (
+            <li key={tip} className="tip-item">
+              <span className="tip-number" aria-hidden="true">{index + 1}</span>
+              <p className="tip-text">{tip}</p>
+            </li>
+          ))}
+        </ol>
+      </article>
+    </section>
+  );
+}
 
 function HomePage({
   labels,
   currentUser,
   healthCards,
+  reminders,
+  appointments,
   contacts,
-  reminders,     // pass today's reminders from App.jsx
   onListen,
   onCall,
+  onAddContact,
   onToggleReminder,
 }) {
+  const location = useLocation();
   const firstName = currentUser?.fullName?.split(" ")[0] || currentUser?.fullName;
 
   const getGreeting = () => {
@@ -201,65 +387,62 @@ function HomePage({
     { weekday: "long", day: "numeric", month: "long" }
   );
 
+  useEffect(() => {
+    if (!location.state?.scrollToEmergencyContacts) {
+      return;
+    }
+
+    const scrollToEmergencyContacts = () => {
+      const target = document.getElementById("emergency-contacts");
+      if (target) {
+        target.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    };
+
+    const timeoutId = window.setTimeout(scrollToEmergencyContacts, 0);
+    return () => window.clearTimeout(timeoutId);
+  }, [location.state]);
+
   return (
     <div className="home-page-main">
-
-      {/* ── Welcome ── */}
-      <div className="home-welcome" aria-live="polite">
-        <p className="home-greeting">{getGreeting()},</p>
-        <h2 className="home-user-name">{firstName}!</h2>
-        <p className="home-date">{todayDate}</p>
-      </div>
 
       {/* ── Daily status strip ── */}
       <DailyStatusStrip
         labels={labels}
         reminders={reminders || []}
-        contacts={contacts || []}
+        appointments={appointments || []}
       />
+
+      {/* ── Today's medicines & Upcoming appointments ── */}
+      <div className="medicines-appointments-row">
+        <TodaysMedicinesPanel
+          labels={labels}
+          reminders={reminders || []}
+          onToggleReminder={onToggleReminder}
+        />
+        <UpcomingAppointmentsPanel
+          labels={labels}
+          appointments={appointments || []}
+        />
+      </div>
+
+      <WorkoutAndTipsPanel labels={labels} />
 
       {/* ── Quick access grid ── */}
       <QuickAccessGrid labels={labels} />
 
-      {/* ── Medicine summary ── */}
-      <MedicineSummary
-        labels={labels}
-        reminders={reminders || []}
-        onToggle={onToggleReminder}
-      />
-
-      {/* ── Daily health tip ── */}
-      <DailyHealthTip
-        labels={labels}
-        healthCards={healthCards}
-        onListen={onListen}
-      />
-
-      {/* ── Health info (full cards, existing component) ── */}
-      <section className="home-section" id="health-info">
-        <h3>{labels.healthInfo}</h3>
-        <HealthInfoSection
-          labels={labels}
-          healthCards={healthCards}
-          onListen={onListen}
-        />
-      </section>
-
+    
       {/* ── Weather ── */}
       <WeatherCard labels={labels} />
 
-      {/* ── Mood check-in ── */}
-      <MoodCheckin labels={labels} />
 
       {/* ── Emergency contacts (existing component) ── */}
-      <section className="home-section" id="emergency-contacts">
-        <h3>{labels.emergencyContacts}</h3>
-        <EmergencyContactsSection
-          labels={labels}
-          contacts={contacts}
-          onCall={onCall}
-        />
-      </section>
+      <EmergencyContactsSection
+        labels={labels}
+        contacts={contacts}
+        onCall={onCall}
+        onAddContact={onAddContact}
+      />
 
     </div>
   );
