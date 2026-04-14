@@ -1,13 +1,37 @@
-import { useEffect, useState } from "react";
+import React, { useState, useEffect } from "react";
+import "./ExercisesPage.css";
 
 function ExercisesPage({ labels, currentUser, onListen }) {
-  const [selectedDifficulty, setSelectedDifficulty] = useState("beginner");
+  const [selectedDifficulty, setSelectedDifficulty] = useState("all");
   const [activeExercise, setActiveExercise] = useState(null);
   const [exerciseProgress, setExerciseProgress] = useState({});
   const [isGuidedMode, setIsGuidedMode] = useState(false);
-  const [completedToday, setCompletedToday] = useState(0);
+  
+  // Initialize completedDays from Local Storage
+  const [completedDays, setCompletedDays] = useState(() => {
+    const savedDays = localStorage.getItem("completedExercisesPlan");
+    if (savedDays) {
+      return JSON.parse(savedDays);
+    }
+    return [];
+  });
+
+  const [currentDayStr, setCurrentDayStr] = useState("");
+
+  // Determine current day on load
+  useEffect(() => {
+    const days = ["SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT"];
+    const today = new Date().getDay();
+    setCurrentDayStr(days[today]);
+  }, []);
+
+  // Save to Local Storage whenever completedDays changes
+  useEffect(() => {
+    localStorage.setItem("completedExercisesPlan", JSON.stringify(completedDays));
+  }, [completedDays]);
 
   const exercises = [
+    // --- BEGINNER ---
     {
       id: 1,
       name: "Gentle Walking",
@@ -15,10 +39,11 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       duration: 10,
       description: "A slow and easy walk to improve circulation and mood.",
       instructions: "Walk at a comfortable pace, swing your arms gently, keep your back straight.",
-      video: "https://www.youtube.com/embed/wjEAVnCqeKo",
       benefits: "Improves heart health, increases energy, enhances balance.",
       reps: 1,
-      safety: "Wear comfortable shoes, walk on a flat surface, stay hydrated."
+      safety: "Wear comfortable shoes, walk on a flat surface, stay hydrated.",
+      icon: "🚶",
+      bgColor: "#bae6fd" /* Stronger sky blue */
     },
     {
       id: 2,
@@ -27,10 +52,11 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       duration: 8,
       description: "Easy stretching exercises while sitting to improve flexibility.",
       instructions: "Sit in a chair with good posture. Slowly stretch each limb and hold for 20 seconds.",
-      video: "https://www.youtube.com/embed/gTCYvGT92TQ",
       benefits: "Increases flexibility, reduces stiffness, improves circulation.",
       reps: 10,
-      safety: "Move slowly, don't bounce, stop if you feel pain."
+      safety: "Move slowly, don't bounce, stop if you feel pain.",
+      icon: "🪑",
+      bgColor: "#dbeafe" /* Soft blue */
     },
     {
       id: 3,
@@ -39,307 +65,296 @@ function ExercisesPage({ labels, currentUser, onListen }) {
       duration: 5,
       description: "Gentle shoulder and arm rotation exercise.",
       instructions: "Stand or sit comfortably. Extend arms to the sides and make slow circles forward, then backward.",
-      video: "https://www.youtube.com/embed/ksSQqxMR9N8",
       benefits: "Improves shoulder mobility, strengthens arm muscles.",
       reps: 15,
-      safety: "Keep movements controlled and gentle, don't overextend."
+      safety: "Keep movements controlled and gentle, don't overextend.",
+      icon: "🦋",
+      bgColor: "#e0f2fe" /* Light sky blue */
     },
+    
+    // --- INTERMEDIATE ---
     {
       id: 4,
-      name: "Seated Marching",
-      difficulty: "beginner",
-      duration: 7,
-      description: "Lift legs alternately while seated to activate leg muscles.",
-      instructions: "Sit in a chair and lift one knee up, then the other, in a marching motion.",
-      video: "https://www.youtube.com/embed/S3rn18_eZRw",
-      benefits: "Strengthens legs, improves energy, boosts circulation.",
-      reps: 20,
-      safety: "Keep pace steady, hold the chair for support if needed."
-    },
-    {
-      id: 5,
-      name: "Shoulder Rolls",
-      difficulty: "beginner",
-      duration: 5,
-      description: "Roll shoulders backward and forward to release tension.",
-      instructions: "Sit or stand upright. Slowly roll shoulders backward 10 times, then forward 10 times.",
-      video: "https://www.youtube.com/embed/4J0yAl8OMpE",
-      benefits: "Relieves shoulder tension, improves posture, reduces stiffness.",
-      reps: 20,
-      safety: "Move smoothly without jerking motions."
-    },
-    {
-      id: 6,
       name: "Standing Balance",
       difficulty: "intermediate",
       duration: 10,
       description: "Improve balance and stability with guided standing exercises.",
       instructions: "Stand safely, place hands on a chair or wall. Hold on and slowly lift one foot slightly, alternating feet.",
-      video: "https://www.youtube.com/embed/60O8aQODSA8",
       benefits: "Improves balance, prevents falls, strengthens leg muscles.",
       reps: 10,
-      safety: "Always have support nearby, perform near a wall or chair."
+      safety: "Always have support nearby, perform near a wall or chair.",
+      icon: "🧘",
+      bgColor: "#dbeafe"
     },
     {
-      id: 7,
+      id: 5,
       name: "Wall Push-ups",
       difficulty: "intermediate",
       duration: 8,
       description: "Gentle upper body strengthening using a wall.",
       instructions: "Stand facing a wall, hands on wall at shoulder height. Lean in and push back.",
-      video: "https://www.youtube.com/embed/lXBnEFQqtCU",
       benefits: "Strengthens chest and arms, improves posture.",
       reps: 10,
-      safety: "Ensure wall is stable, move slowly and controlled."
+      safety: "Ensure wall is stable, move slowly and controlled.",
+      icon: "💪",
+      bgColor: "#bae6fd"
+    },
+    {
+      id: 6,
+      name: "Gentle Step-Ups",
+      difficulty: "intermediate",
+      duration: 10,
+      description: "Use a bottom stair or stable block to step up and down safely.",
+      instructions: "Hold a handrail. Step up with right foot, then left. Step down right, then left.",
+      benefits: "Strengthens legs and improves cardiovascular health.",
+      reps: 10,
+      safety: "Always hold a rail and look exactly where you step.",
+      icon: "🪜",
+      bgColor: "#e0f2fe"
+    },
+
+    // --- ADVANCED ---
+    {
+      id: 7,
+      name: "Advanced Chair Squats",
+      difficulty: "advanced",
+      duration: 12,
+      description: "Strengthens legs and improves mobility using a chair for support.",
+      instructions: "Stand in front of a chair. Slowly sit down and stand up without dropping.",
+      benefits: "Builds leg strength, improves balance, supports independence.",
+      reps: 10,
+      safety: "Use a stable chair and keep movements slow and controlled.",
+      icon: "🦵",
+      bgColor: "#e0f2fe"
     },
     {
       id: 8,
-      name: "Neck Stretches",
-      difficulty: "beginner",
-      duration: 6,
-      description: "Gently stretch neck muscles to relieve tension.",
-      instructions: "Sit upright. Turn head slowly to each side, tilt ear toward shoulder.",
-      video: "https://www.youtube.com/embed/zSZNsIFID0I",
-      benefits: "Relieves neck pain, improves flexibility, reduces tension headaches.",
+      name: "Resistance Band Rows",
+      difficulty: "advanced",
+      duration: 15,
+      description: "Strengthen upper back and posture using a light resistance band.",
+      instructions: "Sit on the floor or chair, loop band around feet, pull handles back toward waist.",
+      benefits: "Improves posture and upper back strength.",
+      reps: 12,
+      safety: "Ensure the band is securely anchored around your feet before pulling.",
+      icon: "🎗️",
+      bgColor: "#dbeafe"
+    },
+    {
+      id: 9,
+      name: "Supported Lunges",
+      difficulty: "advanced",
+      duration: 10,
+      description: "Build lower body strength using a chair for balance.",
+      instructions: "Hold a chair back. Step one foot back, lower hips slightly, then return.",
+      benefits: "Enhances leg strength, hip flexibility, and coordination.",
       reps: 8,
-      safety: "Move slowly, never force, stop if you feel sharp pain."
+      safety: "Don't let your front knee go past your toes. Keep movements shallow if needed.",
+      icon: "🧎",
+      bgColor: "#bae6fd"
     }
   ];
 
-  const filteredExercises = exercises.filter(e => e.difficulty === selectedDifficulty);
+  const weeklyPlanData = [
+    { day: "MON", exerciseName: "Seated Stretches", isRest: false },
+    { day: "TUE", exerciseName: "Wall Push-ups", isRest: false },
+    { day: "WED", exerciseName: "Rest day", isRest: true },
+    { day: "THU", exerciseName: "Gentle Walking", isRest: false },
+    { day: "FRI", exerciseName: "Standing Balance", isRest: false },
+    { day: "SAT", exerciseName: "Supported Lunges", isRest: false },
+    { day: "SUN", exerciseName: "Rest day", isRest: true }
+  ];
+
+  const filteredExercises = exercises.filter(
+    (e) => e.difficulty === selectedDifficulty || selectedDifficulty === "all"
+  );
 
   const handleStartGuided = (exercise) => {
     setActiveExercise(exercise);
     setIsGuidedMode(true);
-    // Start with voice guidance
     const guidanceText = `Welcome to ${exercise.name}. This exercise will take about ${exercise.duration} minutes. ${exercise.instructions}. Let's begin!`;
-    onListen(guidanceText);
+    if (onListen) onListen(guidanceText);
   };
 
   const handleCompleteExercise = (exerciseId) => {
-    setExerciseProgress(prev => ({
+    setExerciseProgress((prev) => ({
       ...prev,
       [exerciseId]: (prev[exerciseId] || 0) + 1
     }));
-    setCompletedToday(completedToday + 1);
     setActiveExercise(null);
-    const successMessage = "Great job! Exercise completed. Take a moment to breathe and relax.";
-    onListen(successMessage);
+    setIsGuidedMode(false);
+    if (onListen) onListen("Great job! Exercise completed. Take a moment to breathe and relax.");
   };
 
-  const getDailyGoal = () => {
-    const userAge = currentUser?.age || 65;
-    if (userAge > 75) return 15; // 15 min for 75+
-    if (userAge > 65) return 20; // 20 min for 65-75
-    return 30; // 30 min for under 65
+  const toggleDayCompletion = (dayStr) => {
+    setCompletedDays((prev) => 
+      prev.includes(dayStr) ? prev.filter(d => d !== dayStr) : [...prev, dayStr]
+    );
   };
 
-  const getTotalMinutesToday = () => {
-    return Object.entries(exerciseProgress).reduce((total, [exerciseId, count]) => {
-      const exercise = exercises.find(e => e.id === parseInt(exerciseId));
-      return total + (exercise ? exercise.duration * count : 0);
-    }, 0);
+  const renderDifficultyDots = (difficulty) => {
+    const dots = difficulty === "beginner" ? 1 : difficulty === "intermediate" ? 2 : 3;
+    return (
+      <div className="difficulty-dots">
+        {[1, 2, 3].map(dot => (
+          <span key={dot} className={`dot ${dot <= dots ? 'filled' : ''}`}></span>
+        ))}
+      </div>
+    );
   };
 
   return (
     <div className="exercises-page-main">
-      <section className="panel home-section">
-        <h2>{labels.exercises || "Guided Workouts"}</h2>
-        <p>Safe, age-appropriate exercises with voice guidance and video demonstrations.</p>
-      </section>
-
-      <div className="exercises-container">
-        {/* Progress Section */}
-        <section className="panel exercise-progress-card">
-          <h3>Today's Activity</h3>
-          <div className="progress-summary">
-            <div className="progress-item">
-              <div className="progress-number">{completedToday}</div>
-              <div className="progress-label">Exercises Done</div>
-            </div>
-            <div className="progress-item">
-              <div className="progress-number">{getTotalMinutesToday()}</div>
-              <div className="progress-label">Minutes</div>
-            </div>
-            <div className="progress-item">
-              <div className="progress-number">{getDailyGoal()}</div>
-              <div className="progress-label">Daily Goal</div>
-            </div>
+      <main className="exercises-container">
+        
+        {/* Exercise Library Section */}
+        <section className="exercise-library">
+          <div className="section-header">
+            <h2>EXERCISE LIBRARY</h2>
+            <hr />
           </div>
-          <div className="progress-bar">
-            <div 
-              className="progress-fill" 
-              style={{ width: `${Math.min((getTotalMinutesToday() / getDailyGoal()) * 100, 100)}%` }}
-            ></div>
+          <p className="section-subtitle">All exercises are low-impact, chair-friendly options available, and can be adapted to your comfort level.</p>
+
+          <div className="difficulty-filters">
+            <button className={`filter-btn ${selectedDifficulty === 'all' ? 'active' : ''}`} onClick={() => setSelectedDifficulty('all')}>All</button>
+            <button className={`filter-btn ${selectedDifficulty === 'beginner' ? 'active' : ''}`} onClick={() => setSelectedDifficulty('beginner')}>Beginner</button>
+            <button className={`filter-btn ${selectedDifficulty === 'intermediate' ? 'active' : ''}`} onClick={() => setSelectedDifficulty('intermediate')}>Intermediate</button>
+            <button className={`filter-btn ${selectedDifficulty === 'advanced' ? 'active' : ''}`} onClick={() => setSelectedDifficulty('advanced')}>Advanced</button>
           </div>
-          <p className="progress-text">
-            {getTotalMinutesToday() >= getDailyGoal() 
-              ? "🎉 Daily goal achieved! Great work!" 
-              : `Keep going! ${getDailyGoal() - getTotalMinutesToday()} minutes left.`}
-          </p>
-        </section>
 
-        {/* Quick Tips */}
-        <section className="panel exercise-tips-card">
-          <h3>💡 Safety Reminders</h3>
-          <ul className="tips-list">
-            <li>Start slowly and gradually increase intensity</li>
-            <li>Wear comfortable, supportive shoes</li>
-            <li>Stay hydrated during exercise</li>
-            <li>Stop if you feel dizzy or experience pain</li>
-            <li>Exercise in a safe, clear space</li>
-          </ul>
-        </section>
-
-        {/* Difficulty Selection */}
-        <section className="exercises-difficulty-section">
-          <h3>Select Difficulty Level</h3>
-          <div className="difficulty-buttons">
-            {["beginner", "intermediate", "advanced"].map(level => (
-              <button
-                key={level}
-                className={`difficulty-btn ${selectedDifficulty === level ? "difficulty-btn-active" : ""}`}
-                onClick={() => setSelectedDifficulty(level)}
-              >
-                {level.charAt(0).toUpperCase() + level.slice(1)}
-              </button>
+          <div className="exercises-grid">
+            {filteredExercises.map((exercise) => (
+              <div key={exercise.id} className="exercise-card">
+                <div className="card-top" style={{ backgroundColor: exercise.bgColor }}>
+                  <span className="card-icon">{exercise.icon}</span>
+                </div>
+                <div className="card-body">
+                  <span className="duration-badge">{exercise.duration} MIN</span>
+                  <h3>{exercise.name}</h3>
+                  <p>{exercise.description}</p>
+                </div>
+                <div className="card-footer">
+                  {renderDifficultyDots(exercise.difficulty)}
+                  <button className="action-text-btn" onClick={() => handleStartGuided(exercise)}>
+                    Start workout
+                  </button>
+                </div>
+              </div>
             ))}
           </div>
         </section>
 
-        {/* Active Guided Exercise Modal */}
-        {isGuidedMode && activeExercise && (
-          <div className="guided-workout-modal">
-            <div className="guided-workout-card">
-              <button 
-                className="guided-close-btn" 
-                onClick={() => setIsGuidedMode(false)}
-              >
-                ✕
+        {/* Stay Safe Section */}
+        <section className="stay-safe-section">
+          <div className="section-header">
+            <h2>STAY SAFE</h2>
+            <hr />
+          </div>
+          <p className="section-subtitle">Your well-being is always the priority. Keep these principles in mind every session.</p>
+          
+          <div className="safety-grid">
+            <div className="safety-card">
+              <span className="safety-icon">🩺</span>
+              <h4>Consult your doctor</h4>
+              <p>Always get medical clearance before starting any new exercise program.</p>
+            </div>
+            <div className="safety-card">
+              <span className="safety-icon">💧</span>
+              <h4>Stay hydrated</h4>
+              <p>Drink water before, during, and after every session — even light activity.</p>
+            </div>
+            <div className="safety-card">
+              <span className="safety-icon">🧘</span>
+              <h4>Warm up first</h4>
+              <p>Begin every workout with 3-5 minutes of gentle movement to prepare your body.</p>
+            </div>
+            <div className="safety-card">
+              <span className="safety-icon">🔴</span>
+              <h4>Listen to your body</h4>
+              <p>Use smooth movements and stop if you experience shortness of breath.</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Weekly Plan */}
+        <section className="weekly-plan-section">
+          <div className="section-header">
+            <h2>WEEKLY PLAN</h2>
+            <hr />
+          </div>
+          <p className="section-subtitle">Rest is just as important as movement. Check off your daily activities below to track your progress!</p>
+          
+          <div className="weekly-days">
+            {weeklyPlanData.map((plan) => {
+              const isToday = plan.day === currentDayStr;
+              const isDone = completedDays.includes(plan.day);
+
+              return (
+                <div 
+                  key={plan.day} 
+                  className={`day-card ${isToday ? 'active' : ''} ${isDone ? 'completed' : ''}`}
+                  style={isDone ? { backgroundColor: '#f0f8ff', border: '2px solid #006B9F' } : {}}
+                >
+                  <strong>{plan.day} {isToday && "(Today)"}</strong>
+                  
+                  {plan.isRest ? (
+                    <>
+                      <span className="icon" style={{ marginTop: '5px' }}>🌿</span>
+                      <span>{plan.exerciseName}</span>
+                    </>
+                  ) : (
+                    <>
+                      <span style={{ marginBottom: '8px', fontWeight: '500' }}>{plan.exerciseName}</span>
+                      <button 
+                        onClick={() => toggleDayCompletion(plan.day)}
+                        style={{
+                          marginTop: 'auto',
+                          padding: '8px 10px',
+                          borderRadius: '6px',
+                          border: 'none',
+                          backgroundColor: isDone ? '#006B9F' : '#e0f2fe',
+                          color: isDone ? 'white' : '#006B9F',
+                          cursor: 'pointer',
+                          fontWeight: 'bold',
+                          fontSize: '0.85rem',
+                          width: '100%',
+                          transition: 'all 0.2s'
+                        }}
+                      >
+                        {isDone ? "✅ Completed" : "Mark Done"}
+                      </button>
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </section>
+      </main>
+
+      {/* Guided Modal */}
+      {isGuidedMode && activeExercise && (
+        <div className="modal-overlay">
+          <div className="guided-modal">
+            <button className="close-btn" onClick={() => setIsGuidedMode(false)}>✕</button>
+            <h2>{activeExercise.name}</h2>
+            <div className="modal-badge">{activeExercise.duration} MIN</div>
+            <div className="modal-content">
+              <p><strong>Instructions:</strong> {activeExercise.instructions}</p>
+              <p><strong>Benefits:</strong> {activeExercise.benefits}</p>
+              <p><strong>Safety:</strong> {activeExercise.safety}</p>
+            </div>
+            <div className="modal-actions">
+              <button className="btn-primary" onClick={() => onListen && onListen(activeExercise.instructions)}>
+                🔊 Hear Instructions
               </button>
-              
-              <h2>{activeExercise.name}</h2>
-              
-              <div className="guided-timer">
-                <div className="timer-display">{activeExercise.duration} min</div>
-              </div>
-
-              <div className="guided-instructions">
-                <p><strong>Instructions:</strong></p>
-                <p>{activeExercise.instructions}</p>
-              </div>
-
-              <div className="guided-video">
-                <iframe
-                  width="100%"
-                  height="300"
-                  src={activeExercise.video}
-                  title={activeExercise.name}
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              </div>
-
-              <div className="guided-benefits">
-                <p><strong>Benefits:</strong> {activeExercise.benefits}</p>
-              </div>
-
-              <div className="guided-actions">
-                <button 
-                  className="audio-btn"
-                  onClick={() => onListen(activeExercise.instructions)}
-                >
-                  🔊 Hear Instructions
-                </button>
-                <button 
-                  className="audio-btn"
-                  onClick={() => onListen(`Repeat ${activeExercise.reps} times. Starting now. One.`)}
-                >
-                  🔊 Start Counting
-                </button>
-                <button 
-                  className="plain-btn"
-                  onClick={() => setIsGuidedMode(false)}
-                >
-                  Continue Solo
-                </button>
-              </div>
-
-              <button 
-                className="audio-btn"
-                onClick={() => handleCompleteExercise(activeExercise.id)}
-              >
-                ✓ Complete Exercise
+              <button className="btn-secondary" onClick={() => handleCompleteExercise(activeExercise.id)}>
+                ✓ Complete
               </button>
             </div>
           </div>
-        )}
-
-        {/* Exercises Grid */}
-        <div className="exercises-grid">
-          {filteredExercises.map(exercise => (
-            <div key={exercise.id} className="exercise-card">
-              <div className="exercise-header">
-                <h3>{exercise.name}</h3>
-                <span className="difficulty-badge">{exercise.difficulty}</span>
-              </div>
-
-              <p className="exercise-description">{exercise.description}</p>
-
-              <div className="exercise-details">
-                <div className="detail-item">
-                  <span className="detail-label">⏱️ Duration:</span>
-                  <span>{exercise.duration} min</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">🔄 Reps:</span>
-                  <span>{exercise.reps}</span>
-                </div>
-                <div className="detail-item">
-                  <span className="detail-label">✓ Completed:</span>
-                  <span>{exerciseProgress[exercise.id] || 0} times</span>
-                </div>
-              </div>
-
-              <div className="exercise-benefits">
-                <strong>Benefits:</strong> {exercise.benefits}
-              </div>
-
-              <div className="exercise-safety">
-                <strong>Safety:</strong> {exercise.safety}
-              </div>
-
-              <div className="exercise-actions">
-                <button 
-                  className="audio-btn"
-                  onClick={() => handleStartGuided(exercise)}
-                >
-                  🎯 Start Guided
-                </button>
-                <button 
-                  className="plain-btn"
-                  onClick={() => onListen(exercise.instructions)}
-                >
-                  🔊 Hear Tips
-                </button>
-              </div>
-            </div>
-          ))}
         </div>
-
-        {/* Daily Recommendation */}
-        <section className="panel exercise-recommendation-card">
-          <h3>📋 Today's Recommendation</h3>
-          <p>
-            Based on your profile, aim for <strong>{getDailyGoal()} minutes</strong> of gentle activity today. 
-            Start with beginner exercises, then progress to intermediate if you feel comfortable.
-          </p>
-          <p>
-            <strong>Suggested routine:</strong> Gentle Walking → Arm Circles → Seated Stretches → Rest
-          </p>
-        </section>
-      </div>
+      )}
     </div>
   );
 }

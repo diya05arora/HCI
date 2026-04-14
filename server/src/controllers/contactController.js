@@ -5,6 +5,23 @@ export const getEmergencyContacts = async (_req, res) => {
   return res.json(contacts);
 };
 
+export const createEmergencyContact = async (req, res) => {
+  const { name, relation, phone, priority } = req.body;
+
+  if (!name || !relation || !phone) {
+    return res.status(400).json({ message: "Name, relation, and phone are required." });
+  }
+
+  const contact = await EmergencyContact.create({
+    name: String(name).trim(),
+    relation: String(relation).trim(),
+    phone: String(phone).trim(),
+    priority: Number.isFinite(Number(priority)) ? Number(priority) : 1
+  });
+
+  return res.status(201).json(contact);
+};
+
 export const placeEmergencyCall = async (req, res) => {
   const { contactId } = req.body;
 
