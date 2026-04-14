@@ -452,7 +452,6 @@ function AuthPage({ labels, authMode, authForm, authSubmitting, onModeChange, on
                   className="auth-input-large"
                 >
                   <option value="elderly">{labels.elderlyUser}</option>
-                  <option value="caregiver">{labels.caregiverUser}</option>
                 </select>
               </div>
             </>

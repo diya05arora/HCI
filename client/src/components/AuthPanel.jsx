@@ -70,7 +70,6 @@ function AuthPanel({
               onChange={(event) => onFieldChange("role", event.target.value)}
             >
               <option value="elderly">{labels.elderlyUser}</option>
-              <option value="caregiver">{labels.caregiverUser}</option>
             </select>
           </label>
         )}

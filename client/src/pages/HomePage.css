@@ -687,6 +687,110 @@
   text-align: right;
 }
 
+.weather-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.8rem;
+}
+
+.weather-header-row .panel-section-label {
+  margin-bottom: 0;
+}
+
+.weather-settings-button {
+  border: 1px solid var(--border-light);
+  background: #ffffff;
+  color: var(--text-main);
+  font-size: 0.78rem;
+  font-weight: 600;
+  border-radius: 999px;
+  padding: 0.32rem 0.75rem;
+  cursor: pointer;
+}
+
+.weather-settings-button:hover,
+.weather-settings-button:focus-visible {
+  border-color: #93c5fd;
+  background: #eff6ff;
+}
+
+.weather-settings-panel {
+  margin-top: 0.8rem;
+  border: 1px solid #dbeafe;
+  border-radius: 0.85rem;
+  background: #f8fbff;
+  padding: 0.8rem;
+}
+
+.weather-settings-label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 0.35rem;
+}
+
+.weather-settings-controls {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.5rem;
+}
+
+.weather-settings-input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.55rem;
+  padding: 0.48rem 0.62rem;
+  font-size: 0.88rem;
+  color: var(--text-main);
+  background: #ffffff;
+}
+
+.weather-settings-input:focus-visible {
+  outline: 2px solid #bfdbfe;
+  outline-offset: 1px;
+}
+
+.weather-settings-save {
+  border: none;
+  border-radius: 0.55rem;
+  padding: 0.48rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #ffffff;
+  background: #2563eb;
+  cursor: pointer;
+}
+
+.weather-settings-save:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.weather-settings-current {
+  margin-top: 0.55rem;
+  border: none;
+  background: transparent;
+  color: #2563eb;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0;
+  cursor: pointer;
+}
+
+.weather-settings-current:hover,
+.weather-settings-current:focus-visible {
+  text-decoration: underline;
+}
+
+.weather-settings-error {
+  margin: 0.45rem 0 0;
+  color: #b91c1c;
+  font-size: 0.8rem;
+}
+
 
 /* ── Mood check-in ────────────────────────────────────────── */
 
