@@ -158,18 +158,302 @@ function MedicineSummary({ labels, reminders, onToggle }) {
 }
 
 
+const DEFAULT_WEATHER_LOCATION = {
+  latitude: 12.9716,
+  longitude: 77.5946,
+  label: "Bangalore"
+};
+
+const WEATHER_REFRESH_INTERVAL_MS = 20 * 60 * 1000;
+const WEATHER_PREFERRED_CITY_KEY = "weather_preferred_city";
+
+function getStoredPreferredCity() {
+  try {
+    const raw = localStorage.getItem(WEATHER_PREFERRED_CITY_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch {
+    return null;
+  }
+}
+
+function setStoredPreferredCity(city) {
+  try {
+    localStorage.setItem(WEATHER_PREFERRED_CITY_KEY, JSON.stringify(city));
+  } catch {
+    // Ignore storage errors.
+  }
+}
+
+function clearStoredPreferredCity() {
+  try {
+    localStorage.removeItem(WEATHER_PREFERRED_CITY_KEY);
+  } catch {
+    // Ignore storage errors.
+  }
+}
+
+async function reverseGeocode(latitude, longitude) {
+  const params = new URLSearchParams({
+    format: "jsonv2",
+    lat: String(latitude),
+    lon: String(longitude)
+  });
+
+  try {
+    const response = await fetch(`https://nominatim.openstreetmap.org/reverse?${params.toString()}`);
+    if (!response.ok) return "";
+
+    const data = await response.json();
+    const address = data?.address || {};
+    return address.city || address.town || address.village || address.state_district || "";
+  } catch {
+    return "";
+  }
+}
+
+async function geocodeCity(cityName) {
+  const params = new URLSearchParams({
+    q: cityName,
+    format: "jsonv2",
+    limit: "1"
+  });
+
+  const response = await fetch(`https://nominatim.openstreetmap.org/search?${params.toString()}`);
+  if (!response.ok) {
+    throw new Error("City lookup failed");
+  }
+
+  const data = await response.json();
+  if (!Array.isArray(data) || data.length === 0) {
+    return null;
+  }
+
+  const first = data[0];
+  return {
+    latitude: Number(first.lat),
+    longitude: Number(first.lon),
+    label: cityName
+  };
+}
+
+function getWeatherPresentation(weatherCode, isDay) {
+  const code = Number(weatherCode);
+  const daytime = Number(isDay) === 1;
+
+  if (code === 0) return { icon: daytime ? "☀️" : "🌙", description: "Clear sky" };
+  if ([1, 2].includes(code)) return { icon: daytime ? "🌤️" : "🌥️", description: "Partly cloudy" };
+  if (code === 3) return { icon: "☁️", description: "Cloudy" };
+  if ([45, 48].includes(code)) return { icon: "🌫️", description: "Foggy" };
+  if ([51, 53, 55, 56, 57].includes(code)) return { icon: "🌦️", description: "Drizzle" };
+  if ([61, 63, 65, 66, 67].includes(code)) return { icon: "🌧️", description: "Rain" };
+  if ([71, 73, 75, 77].includes(code)) return { icon: "❄️", description: "Snow" };
+  if ([80, 81, 82].includes(code)) return { icon: "🌧️", description: "Rain showers" };
+  if ([85, 86].includes(code)) return { icon: "🌨️", description: "Snow showers" };
+  if ([95, 96, 99].includes(code)) return { icon: "⛈️", description: "Thunderstorm" };
+
+  return { icon: daytime ? "🌤️" : "🌙", description: "Weather updated" };
+}
+
+function getCurrentPositionAsync() {
+  return new Promise((resolve, reject) => {
+    if (!navigator.geolocation) {
+      reject(new Error("Geolocation not supported"));
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(resolve, reject, {
+      enableHighAccuracy: false,
+      timeout: 8000,
+      maximumAge: 10 * 60 * 1000
+    });
+  });
+}
+
+
 function WeatherCard({ labels }) {
-  // Static placeholder — wire to a weather API or env variable as needed.
+  const [weather, setWeather] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [cityInput, setCityInput] = useState("");
+  const [settingsError, setSettingsError] = useState("");
+  const [isSavingCity, setIsSavingCity] = useState(false);
+  const [refreshTick, setRefreshTick] = useState(0);
+  const [preferredCity, setPreferredCity] = useState(() => getStoredPreferredCity());
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadWeather() {
+      setLoading(true);
+      setError(false);
+
+      try {
+        let location = preferredCity && preferredCity.latitude && preferredCity.longitude
+          ? { ...preferredCity }
+          : { ...DEFAULT_WEATHER_LOCATION };
+
+        if (!preferredCity) {
+          try {
+            const position = await getCurrentPositionAsync();
+            location = {
+              latitude: position.coords.latitude,
+              longitude: position.coords.longitude,
+              label: labels.currentLocation || "your location"
+            };
+          } catch {
+            // Permission denied or unavailable; use default fallback.
+          }
+        }
+
+        const params = new URLSearchParams({
+          latitude: String(location.latitude),
+          longitude: String(location.longitude),
+          current: "temperature_2m,weather_code,is_day",
+          timezone: "auto"
+        });
+
+        const response = await fetch(`https://api.open-meteo.com/v1/forecast?${params.toString()}`);
+        if (!response.ok) {
+          throw new Error("Weather API request failed");
+        }
+
+        const data = await response.json();
+        const current = data?.current;
+        if (!current || typeof current.temperature_2m !== "number") {
+          throw new Error("Invalid weather payload");
+        }
+
+        const presentation = getWeatherPresentation(current.weather_code, current.is_day);
+        const cityName = await reverseGeocode(location.latitude, location.longitude);
+        if (!isActive) return;
+
+        setWeather({
+          icon: presentation.icon,
+          description: presentation.description,
+          temperature: Math.round(current.temperature_2m),
+          locationLabel: cityName || location.label || "your area"
+        });
+      } catch {
+        if (!isActive) return;
+        setError(true);
+      } finally {
+        if (!isActive) return;
+        setLoading(false);
+      }
+    }
+
+    loadWeather();
+
+    const intervalId = window.setInterval(() => {
+      loadWeather();
+    }, WEATHER_REFRESH_INTERVAL_MS);
+
+    return () => {
+      isActive = false;
+      window.clearInterval(intervalId);
+    };
+  }, [labels.currentLocation, preferredCity, refreshTick]);
+
+  const handleSaveCity = async () => {
+    const value = cityInput.trim();
+    if (!value) return;
+
+    setSettingsError("");
+    setIsSavingCity(true);
+
+    try {
+      const geocoded = await geocodeCity(value);
+      if (!geocoded) {
+        setSettingsError("City not found. Try another name.");
+        return;
+      }
+
+      setStoredPreferredCity(geocoded);
+      setPreferredCity(geocoded);
+      setShowSettings(false);
+      setCityInput("");
+      setRefreshTick((prev) => prev + 1);
+    } catch {
+      setSettingsError("Could not save city right now.");
+    } finally {
+      setIsSavingCity(false);
+    }
+  };
+
+  const handleUseCurrentLocation = () => {
+    clearStoredPreferredCity();
+    setPreferredCity(null);
+    setShowSettings(false);
+    setCityInput("");
+    setSettingsError("");
+    setRefreshTick((prev) => prev + 1);
+  };
+
+  const icon = weather?.icon || "🌤️";
+  const tempText = weather ? `${weather.temperature}°C` : "--°";
+  const description = loading
+    ? (labels.weatherLoading || "Loading current weather...")
+    : error
+      ? (labels.weatherUnavailable || "Unable to load weather right now.")
+      : weather?.description || (labels.weatherNote || "Check your local weather before going out.");
+
   return (
     <section className="panel weather-panel" aria-label={labels.weatherLabel || "Weather today"}>
-      <h3 className="panel-section-label">{labels.weatherLabel || "Today's Weather"}</h3>
-      <div className="weather-card">
-        <span className="weather-icon" aria-hidden="true">☀️</span>
-        <div className="weather-info">
-          <span className="weather-temp">--°</span>
-          <span className="weather-desc">{labels.weatherNote || "Check your local weather before going out."}</span>
-        </div>
+      <div className="weather-header-row">
+        <h3 className="panel-section-label">{labels.weatherLabel || "Today's Weather"}</h3>
+        <button
+          type="button"
+          className="weather-settings-button"
+          onClick={() => setShowSettings((prev) => !prev)}
+          aria-label="Weather settings"
+        >
+          {showSettings ? "Close" : "Settings"}
+        </button>
       </div>
+      <div className="weather-card">
+        <span className="weather-icon" aria-hidden="true">{icon}</span>
+        <div className="weather-info">
+          <span className="weather-temp">{tempText}</span>
+          <span className="weather-desc">{description}</span>
+        </div>
+        {!loading && !error && weather?.locationLabel && (
+          <span className="weather-note">{weather.locationLabel}</span>
+        )}
+      </div>
+      {showSettings && (
+        <div className="weather-settings-panel" role="group" aria-label="Weather city settings">
+          <label htmlFor="weather-city-input" className="weather-settings-label">
+            Preferred city
+          </label>
+          <div className="weather-settings-controls">
+            <input
+              id="weather-city-input"
+              className="weather-settings-input"
+              type="text"
+              value={cityInput}
+              onChange={(event) => setCityInput(event.target.value)}
+              placeholder="Enter city name"
+            />
+            <button
+              type="button"
+              className="weather-settings-save"
+              onClick={handleSaveCity}
+              disabled={isSavingCity || !cityInput.trim()}
+            >
+              {isSavingCity ? "Saving..." : "Save"}
+            </button>
+          </div>
+          <button
+            type="button"
+            className="weather-settings-current"
+            onClick={handleUseCurrentLocation}
+          >
+            Use current location
+          </button>
+          {settingsError && <p className="weather-settings-error">{settingsError}</p>}
+        </div>
+      )}
     </section>
   );
 }
