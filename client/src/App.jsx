@@ -403,6 +403,40 @@ function App() {
     }
   };
 
+  const handleAddReminder = async (reminderData) => {
+    const response = await fetch(`${API_URL}/reminders`, {
+      method: "POST",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(reminderData)
+    });
+
+    const created = await response.json();
+    if (!response.ok) {
+      throw new Error(created.message || "Could not add medicine.");
+    }
+
+    setReminders((current) => [...current, created]);
+    return created;
+  };
+
+  const handleDeleteReminder = async (id) => {
+    try {
+      const response = await fetch(`${API_URL}/reminders/${id}`, {
+        method: "DELETE",
+        headers: getAuthHeaders()
+      });
+
+      if (!response.ok) {
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.message || "Could not delete medicine.");
+      }
+
+      setReminders((current) => current.filter((entry) => entry._id !== id));
+    } catch (error) {
+      setStatusMessage(error.message);
+    }
+  };
+
   const handleConfirmCall = async () => {
     if (!selectedContact) {
       return;
@@ -651,6 +685,8 @@ function App() {
                       labels={labels}
                       reminders={reminders}
                       onToggleReminder={handleReminderToggle}
+                      onAddReminder={handleAddReminder}
+                      onDeleteReminder={handleDeleteReminder}
                     />
                   }
                 />
